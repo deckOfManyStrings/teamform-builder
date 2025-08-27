@@ -99,7 +99,7 @@ export default function TeamManagement({ businessId, userRole }: TeamManagementP
     if (!canManageTeam || !user) return;
 
     try {
-      const code = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const code = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7); // Expires in 7 days
 
