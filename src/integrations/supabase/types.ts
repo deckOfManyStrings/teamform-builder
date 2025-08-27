@@ -488,6 +488,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: string
       }
+      use_invite_code: {
+        Args: { invitation_code: string; user_id: string }
+        Returns: boolean
+      }
       user_has_min_role: {
         Args: {
           min_role: Database["public"]["Enums"]["user_role"]
@@ -501,6 +505,16 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      validate_invite_code: {
+        Args: { invitation_code: string; user_email?: string }
+        Returns: {
+          business_id: string
+          email: string
+          expires_at: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+        }[]
       }
     }
     Enums: {
