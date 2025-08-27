@@ -9,6 +9,7 @@ import { LogOut, Users, FileText, Building, UserCheck, BarChart3 } from "lucide-
 import BusinessSetup from "@/components/team/BusinessSetup";
 import TeamManagement from "@/components/team/TeamManagement";
 import ClientList from "@/components/clients/ClientList";
+import FormList from "@/components/forms/FormList";
 
 interface UserProfile {
   id: string;
@@ -314,19 +315,7 @@ export default function Dashboard() {
               </TabsContent>
 
               <TabsContent value="forms" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Forms Management</CardTitle>
-                    <CardDescription>
-                      Create and manage healthcare forms for your organization.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Forms management coming in Phase 4...</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <FormList businessId={profile.business_id} userRole={profile.role || 'staff'} />
               </TabsContent>
 
               <TabsContent value="reports" className="space-y-4">
