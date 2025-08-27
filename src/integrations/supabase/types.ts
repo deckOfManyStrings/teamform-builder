@@ -505,7 +505,12 @@ export type Database = {
     }
     Enums: {
       form_status: "draft" | "active" | "inactive" | "archived"
-      submission_status: "draft" | "submitted" | "reviewed" | "approved"
+      submission_status:
+        | "draft"
+        | "submitted"
+        | "reviewed"
+        | "approved"
+        | "rejected"
       subscription_tier: "free" | "basic" | "premium"
       user_role: "owner" | "manager" | "staff"
     }
@@ -636,7 +641,13 @@ export const Constants = {
   public: {
     Enums: {
       form_status: ["draft", "active", "inactive", "archived"],
-      submission_status: ["draft", "submitted", "reviewed", "approved"],
+      submission_status: [
+        "draft",
+        "submitted",
+        "reviewed",
+        "approved",
+        "rejected",
+      ],
       subscription_tier: ["free", "basic", "premium"],
       user_role: ["owner", "manager", "staff"],
     },
