@@ -52,43 +52,58 @@ export default function InviteAccept() {
 
   const validateInviteCode = async () => {
     try {
-      const { data, error } = await supabase
+      console.log('Validating invite code:', code);
+      
+      // First, get the invite code data
+      const { data: inviteData, error: inviteError } = await supabase
         .from('invite_codes')
-        .select(`
-          id,
-          email,
-          role,
-          business_id,
-          expires_at,
-          used_at,
-          businesses!inner(name)
-        `)
+        .select('id, email, role, business_id, expires_at, used_at')
         .eq('code', code)
-        .single();
+        .maybeSingle();
 
-      if (error || !data) {
+      console.log('Invite query result:', { inviteData, inviteError });
+
+      if (inviteError) {
+        console.error('Error fetching invite:', inviteError);
+        setError('Failed to validate invite code.');
+        return;
+      }
+
+      if (!inviteData) {
+        console.error('No invite found for code:', code);
         setError('Invalid or expired invite code.');
         return;
       }
 
-      if (data.used_at) {
+      if (inviteData.used_at) {
         setError('This invite has already been used.');
         return;
       }
 
-      if (new Date(data.expires_at) < new Date()) {
+      if (new Date(inviteData.expires_at) < new Date()) {
         setError('This invite has expired.');
         return;
       }
 
+      // Get the business name separately
+      const { data: businessData, error: businessError } = await supabase
+        .from('businesses')
+        .select('name')
+        .eq('id', inviteData.business_id)
+        .maybeSingle();
+
+      console.log('Business query result:', { businessData, businessError });
+
+      const businessName = businessData?.name || 'Unknown Business';
+
       setInviteDetails({
-        ...data,
-        business_name: (data.businesses as any).name,
+        ...inviteData,
+        business_name: businessName,
       });
 
       // Pre-fill email if specified in invite
-      if (data.email) {
-        setFormData(prev => ({ ...prev, email: data.email! }));
+      if (inviteData.email) {
+        setFormData(prev => ({ ...prev, email: inviteData.email! }));
       }
     } catch (error) {
       console.error('Error validating invite:', error);
