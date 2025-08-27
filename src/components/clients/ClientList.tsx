@@ -325,14 +325,15 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
             <DialogHeader>
               <DialogTitle>Client Details</DialogTitle>
             </DialogHeader>
-            <ClientDetail
-              client={viewClient}
-              onEdit={() => {
-                setEditClient(viewClient);
-                setViewClient(null);
-              }}
-              onClose={() => setViewClient(null)}
-            />
+              <ClientDetail
+                client={viewClient}
+                onEdit={() => {
+                  setEditClient(viewClient);
+                  setViewClient(null);
+                }}
+                onClose={() => setViewClient(null)}
+                businessId={businessId}
+              />
           </DialogContent>
         </Dialog>
       )}
