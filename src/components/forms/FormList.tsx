@@ -227,40 +227,80 @@ export default function FormList({ businessId, userRole }: FormListProps) {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Forms ({forms.length})
-            </CardTitle>
-            <CardDescription>
-              Create and manage forms for your healthcare organization.
-            </CardDescription>
+        <CardHeader className="space-y-4">
+          {/* Mobile Layout - Stack elements */}
+          <div className="sm:hidden space-y-3">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Forms ({forms.length})
+              </CardTitle>
+              <CardDescription>
+                Create and manage forms for your healthcare organization.
+              </CardDescription>
+            </div>
+            {canManageForms && (
+              <Dialog open={createFormOpen} onOpenChange={setCreateFormOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Form
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Create New Form</DialogTitle>
+                    <DialogDescription>
+                      Build a new form from scratch or start with a template.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FormBuilder
+                    businessId={businessId}
+                    templates={templates}
+                    onSaved={handleFormSaved}
+                    onCancel={() => setCreateFormOpen(false)}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
-          {canManageForms && (
-            <Dialog open={createFormOpen} onOpenChange={setCreateFormOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Form
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Create New Form</DialogTitle>
-                  <DialogDescription>
-                    Build a new form from scratch or start with a template.
-                  </DialogDescription>
-                </DialogHeader>
-                <FormBuilder
-                  businessId={businessId}
-                  templates={templates}
-                  onSaved={handleFormSaved}
-                  onCancel={() => setCreateFormOpen(false)}
-                />
-              </DialogContent>
-            </Dialog>
-          )}
+          
+          {/* Desktop Layout - Side by side */}
+          <div className="hidden sm:flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Forms ({forms.length})
+              </CardTitle>
+              <CardDescription>
+                Create and manage forms for your healthcare organization.
+              </CardDescription>
+            </div>
+            {canManageForms && (
+              <Dialog open={createFormOpen} onOpenChange={setCreateFormOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Form
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Create New Form</DialogTitle>
+                    <DialogDescription>
+                      Build a new form from scratch or start with a template.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FormBuilder
+                    businessId={businessId}
+                    templates={templates}
+                    onSaved={handleFormSaved}
+                    onCancel={() => setCreateFormOpen(false)}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {/* Search */}

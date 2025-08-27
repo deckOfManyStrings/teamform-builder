@@ -137,37 +137,74 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Clients ({clients.length})
-            </CardTitle>
-            <CardDescription>
-              Manage your organization's client records and information.
-            </CardDescription>
+        <CardHeader className="space-y-4">
+          {/* Mobile Layout - Stack elements */}
+          <div className="sm:hidden space-y-3">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Clients ({clients.length})
+              </CardTitle>
+              <CardDescription>
+                Manage your organization's client records and information.
+              </CardDescription>
+            </div>
+            <Dialog open={addClientOpen} onOpenChange={setAddClientOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Client
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Client</DialogTitle>
+                  <DialogDescription>
+                    Enter the client's information below.
+                  </DialogDescription>
+                </DialogHeader>
+                <ClientForm
+                  businessId={businessId}
+                  onSaved={handleClientSaved}
+                  onCancel={() => setAddClientOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
-          <Dialog open={addClientOpen} onOpenChange={setAddClientOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Client
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Client</DialogTitle>
-                <DialogDescription>
-                  Enter the client's information below.
-                </DialogDescription>
-              </DialogHeader>
-              <ClientForm
-                businessId={businessId}
-                onSaved={handleClientSaved}
-                onCancel={() => setAddClientOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          
+          {/* Desktop Layout - Side by side */}
+          <div className="hidden sm:flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Clients ({clients.length})
+              </CardTitle>
+              <CardDescription>
+                Manage your organization's client records and information.
+              </CardDescription>
+            </div>
+            <Dialog open={addClientOpen} onOpenChange={setAddClientOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Client
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Client</DialogTitle>
+                  <DialogDescription>
+                    Enter the client's information below.
+                  </DialogDescription>
+                </DialogHeader>
+                <ClientForm
+                  businessId={businessId}
+                  onSaved={handleClientSaved}
+                  onCancel={() => setAddClientOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Search */}

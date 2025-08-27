@@ -276,21 +276,23 @@ export default function Dashboard() {
 
             {/* Tabbed Interface */}
             <Tabs defaultValue="overview" className="space-y-4">
-              {/* Mobile Scrollable Tabs */}
-              <div className="lg:hidden">
-                <TabsList className="w-full justify-start overflow-x-auto">
-                  <TabsTrigger value="overview" className="whitespace-nowrap">Overview</TabsTrigger>
-                  <TabsTrigger value="clients" className="whitespace-nowrap">Clients</TabsTrigger>
-                  <TabsTrigger value="forms" className="whitespace-nowrap">Forms</TabsTrigger>
-                  <TabsTrigger value="submissions" className="whitespace-nowrap">Submissions</TabsTrigger>
-                  <TabsTrigger value="team" className="whitespace-nowrap">Team</TabsTrigger>
-                  <TabsTrigger value="reports" className="whitespace-nowrap">Reports</TabsTrigger>
-                </TabsList>
+              {/* Mobile Scrollable Tabs - Fixed horizontal scroll */}
+              <div className="lg:hidden -mx-2 px-2">
+                <div className="overflow-x-auto scrollbar-hide">
+                  <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground min-w-max">
+                    <TabsTrigger value="overview" className="whitespace-nowrap px-3 py-1.5 text-sm">Overview</TabsTrigger>
+                    <TabsTrigger value="clients" className="whitespace-nowrap px-3 py-1.5 text-sm">Clients</TabsTrigger>
+                    <TabsTrigger value="forms" className="whitespace-nowrap px-3 py-1.5 text-sm">Forms</TabsTrigger>
+                    <TabsTrigger value="submissions" className="whitespace-nowrap px-3 py-1.5 text-sm">Submissions</TabsTrigger>
+                    <TabsTrigger value="team" className="whitespace-nowrap px-3 py-1.5 text-sm">Team</TabsTrigger>
+                    <TabsTrigger value="reports" className="whitespace-nowrap px-3 py-1.5 text-sm">Reports</TabsTrigger>
+                  </TabsList>
+                </div>
               </div>
               
               {/* Desktop Tabs */}
               <div className="hidden lg:block">
-                <TabsList>
+                <TabsList className="grid w-full grid-cols-6">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="clients">Clients</TabsTrigger>
                   <TabsTrigger value="forms">Forms</TabsTrigger>
