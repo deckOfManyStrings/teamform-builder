@@ -1,0 +1,103 @@
+// Utility functions for exporting data to various formats
+
+export const exportToCSV = (data: any[], filename: string) => {
+  if (!data || data.length === 0) {
+    return;
+  }
+
+  // Get all unique keys from all objects to create headers
+  const headers = Array.from(
+    new Set(data.flatMap(item => Object.keys(item)))
+  );
+
+  // Create CSV content
+  const csvContent = [
+    // Header row
+    headers.join(','),
+    // Data rows
+    ...data.map(row => 
+      headers.map(header => {
+        const value = row[header];
+        // Handle nested objects and arrays
+        let cellValue = '';
+        if (value === null || value === undefined) {
+          cellValue = '';
+        } else if (typeof value === 'object') {
+          cellValue = JSON.stringify(value).replace(/"/g, '""');
+        } else {
+          cellValue = String(value).replace(/"/g, '""');
+        }
+        // Wrap in quotes if contains comma, newline, or quotes
+        return cellValue.includes(',') || cellValue.includes('\n') || cellValue.includes('"') 
+          ? `"${cellValue}"` 
+          : cellValue;
+      }).join(',')
+    )
+  ].join('\n');
+
+  // Create and download file
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};
+
+export const formatDateForExport = (dateString: string | null | undefined): string => {
+  if (!dateString) return '';
+  return new Date(dateString).toLocaleString();
+};
+
+export const flattenFormSubmissionData = (submission: any) => {
+  const flatSubmission = { ...submission };
+  
+  // Flatten submission_data if it's an object
+  if (flatSubmission.submission_data && typeof flatSubmission.submission_data === 'object') {
+    const submissionData = flatSubmission.submission_data;
+    delete flatSubmission.submission_data;
+    
+    // Add each field from submission_data as a separate column
+    Object.keys(submissionData).forEach(key => {
+      flatSubmission[`form_field_${key}`] = submissionData[key];
+    });
+  }
+  
+  // Format dates
+  flatSubmission.created_at = formatDateForExport(flatSubmission.created_at);
+  flatSubmission.updated_at = formatDateForExport(flatSubmission.updated_at);
+  flatSubmission.submitted_at = formatDateForExport(flatSubmission.submitted_at);
+  flatSubmission.reviewed_at = formatDateForExport(flatSubmission.reviewed_at);
+  
+  return flatSubmission;
+};
+
+export const flattenClientData = (client: any) => {
+  const flatClient = { ...client };
+  
+  // Flatten contact_info if it's an object
+  if (flatClient.contact_info && typeof flatClient.contact_info === 'object') {
+    const contactInfo = flatClient.contact_info;
+    delete flatClient.contact_info;
+    
+    // Add each field from contact_info as a separate column
+    Object.keys(contactInfo).forEach(key => {
+      flatClient[`contact_${key}`] = contactInfo[key];
+    });
+  }
+  
+  // Format dates
+  flatClient.created_at = formatDateForExport(flatClient.created_at);
+  flatClient.updated_at = formatDateForExport(flatClient.updated_at);
+  if (flatClient.date_of_birth) {
+    flatClient.date_of_birth = new Date(flatClient.date_of_birth).toLocaleDateString();
+  }
+  
+  return flatClient;
+};

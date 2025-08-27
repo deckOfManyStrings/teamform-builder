@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Plus, Search, Eye, Edit, CheckCircle, XCircle } from "lucide-react";
+import { FileText, Plus, Search, Eye, Edit, CheckCircle, XCircle, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import SubmissionForm from "./SubmissionForm";
 import SubmissionDetail from "./SubmissionDetail";
 import NewSubmissionDialog from "./NewSubmissionDialog";
+import { exportToCSV, flattenFormSubmissionData } from "@/lib/exportUtils";
 
 interface Submission {
   id: string;
@@ -226,6 +227,52 @@ export default function SubmissionList({ businessId, userRole }: SubmissionListP
     return new Date(dateString).toLocaleDateString();
   };
 
+  const exportSubmissions = async () => {
+    if (submissions.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No submissions available to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Flatten and format the submission data for export
+      const exportData = submissions.map(submission => {
+        const flattened = flattenFormSubmissionData(submission);
+        
+        // Add related data
+        flattened.form_title = submission.form?.title || 'Unknown Form';
+        flattened.form_description = submission.form?.description || '';
+        flattened.client_name = submission.client?.name || 'No Client';
+        flattened.submitted_by_name = submission.submitted_by_name || 'Unknown User';
+        flattened.reviewed_by_name = submission.reviewed_by_name || '';
+
+        // Remove the nested objects since we've flattened them
+        delete flattened.form;
+        delete flattened.client;
+
+        return flattened;
+      });
+      
+      const filename = `form_submissions_${new Date().toISOString().split('T')[0]}`;
+      exportToCSV(exportData, filename);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${exportData.length} submissions to CSV.`,
+      });
+    } catch (error) {
+      console.error('Error exporting submissions:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export submissions. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <Card>
@@ -249,27 +296,38 @@ export default function SubmissionList({ businessId, userRole }: SubmissionListP
               Manage form submissions and review submitted data.
             </CardDescription>
           </div>
-          <Dialog open={newSubmissionOpen} onOpenChange={setNewSubmissionOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                New Submission
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Create New Submission</DialogTitle>
-                <DialogDescription>
-                  Select a form and client to create a new submission.
-                </DialogDescription>
-              </DialogHeader>
-              <NewSubmissionDialog
-                businessId={businessId}
-                onSubmissionCreated={handleSubmissionSaved}
-                onCancel={() => setNewSubmissionOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exportSubmissions}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
+            <Dialog open={newSubmissionOpen} onOpenChange={setNewSubmissionOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Submission
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Create New Submission</DialogTitle>
+                  <DialogDescription>
+                    Select a form and client to create a new submission.
+                  </DialogDescription>
+                </DialogHeader>
+                <NewSubmissionDialog
+                  businessId={businessId}
+                  onSubmissionCreated={handleSubmissionSaved}
+                  onCancel={() => setNewSubmissionOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Filters */}

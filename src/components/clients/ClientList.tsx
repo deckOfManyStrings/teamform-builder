@@ -6,11 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Users, UserPlus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Users, UserPlus, Search, Edit, Trash2, Eye, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ClientForm from "./ClientForm";
 import ClientDetail from "./ClientDetail";
+import { exportToCSV, flattenClientData } from "@/lib/exportUtils";
 
 interface Client {
   id: string;
@@ -124,6 +125,37 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
     return parts.length > 0 ? parts.join(' • ') : 'No contact info';
   };
 
+  const exportClientData = async () => {
+    if (clients.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No clients available to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Flatten and format the client data for export
+      const exportData = clients.map(client => flattenClientData(client));
+      
+      const filename = `clients_export_${new Date().toISOString().split('T')[0]}`;
+      exportToCSV(exportData, filename);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${exportData.length} clients to CSV.`,
+      });
+    } catch (error) {
+      console.error('Error exporting clients:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export clients. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <Card>
@@ -147,27 +179,38 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
               Manage your organization's client records and information.
             </CardDescription>
           </div>
-          <Dialog open={addClientOpen} onOpenChange={setAddClientOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Client
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Client</DialogTitle>
-                <DialogDescription>
-                  Enter the client's information below.
-                </DialogDescription>
-              </DialogHeader>
-              <ClientForm
-                businessId={businessId}
-                onSaved={handleClientSaved}
-                onCancel={() => setAddClientOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exportClientData}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
+            <Dialog open={addClientOpen} onOpenChange={setAddClientOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Client
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add New Client</DialogTitle>
+                  <DialogDescription>
+                    Enter the client's information below.
+                  </DialogDescription>
+                </DialogHeader>
+                <ClientForm
+                  businessId={businessId}
+                  onSaved={handleClientSaved}
+                  onCancel={() => setAddClientOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Search */}
