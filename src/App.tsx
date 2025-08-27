@@ -27,7 +27,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return user ? <>{children}</> : <Navigate to="/auth" replace />;
+  if (!user) {
+    console.log("No authenticated user, redirecting to auth");
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 const App = () => (
