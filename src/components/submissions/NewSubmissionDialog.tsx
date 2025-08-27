@@ -140,7 +140,6 @@ export default function NewSubmissionDialog({ businessId, onSubmissionCreated, o
             <SelectValue placeholder="Choose a client (optional)" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">No client selected</SelectItem>
             {clients.map((client) => (
               <SelectItem key={client.id} value={client.id}>
                 {client.name}
