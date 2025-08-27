@@ -11,6 +11,8 @@ import TeamManagement from "@/components/team/TeamManagement";
 import ClientList from "@/components/clients/ClientList";
 import FormList from "@/components/forms/FormList";
 import SubmissionList from "@/components/submissions/SubmissionList";
+import AnalyticsDashboard from "@/components/reports/AnalyticsDashboard";
+import AuditTrail from "@/components/reports/AuditTrail";
 
 interface UserProfile {
   id: string;
@@ -35,7 +37,13 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [teamStats, setTeamStats] = useState({ memberCount: 0, formCount: 0, submissionCount: 0, clientCount: 0 });
+  const [teamStats, setTeamStats] = useState({ 
+    memberCount: 0, 
+    formCount: 0, 
+    submissionCount: 0, 
+    clientCount: 0, 
+    pendingReview: 0 
+  });
 
   useEffect(() => {
     if (user) {
@@ -127,22 +135,30 @@ export default function Dashboard() {
         .eq('business_id', businessId);
 
       // Get submission count
+      const formIds = (await supabase
+        .from('forms')
+        .select('id')
+        .eq('business_id', businessId)
+      ).data?.map(f => f.id) || [];
+
       const { count: submissionCount } = await supabase
         .from('form_submissions')
         .select('form_id', { count: 'exact', head: true })
-        .in('form_id', 
-          (await supabase
-            .from('forms')
-            .select('id')
-            .eq('business_id', businessId)
-          ).data?.map(f => f.id) || []
-        );
+        .in('form_id', formIds);
+
+      // Get pending review count
+      const { count: pendingReview } = await supabase
+        .from('form_submissions')
+        .select('form_id', { count: 'exact', head: true })
+        .in('form_id', formIds)
+        .eq('status', 'submitted');
 
       setTeamStats({
         memberCount: memberCount || 0,
         clientCount: clientCount || 0,
         formCount: formCount || 0,
-        submissionCount: submissionCount || 0
+        submissionCount: submissionCount || 0,
+        pendingReview: pendingReview || 0
       });
     } catch (error) {
       console.error('Error fetching team stats:', error);
@@ -297,7 +313,7 @@ export default function Dashboard() {
                       <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">0</div>
+                      <div className="text-2xl font-bold">{teamStats.pendingReview}</div>
                       <p className="text-xs text-muted-foreground">
                         submissions awaiting review
                       </p>
@@ -338,19 +354,10 @@ export default function Dashboard() {
               </TabsContent>
 
               <TabsContent value="reports" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Reports & Analytics</CardTitle>
-                    <CardDescription>
-                      View detailed reports and analytics for your organization.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Reports and analytics coming in Phase 6...</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="space-y-6">
+                  <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                  <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                </div>
               </TabsContent>
             </Tabs>
           </div>
