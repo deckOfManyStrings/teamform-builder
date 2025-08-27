@@ -52,7 +52,8 @@ export default function InviteAccept() {
 
   const validateInviteCode = async () => {
     try {
-      console.log('Validating invite code:', code);
+      console.log('🔍 Validating invite code:', code);
+      console.log('🔍 Current user state:', user ? 'authenticated' : 'anonymous');
       
       // First, get the invite code data
       const { data: inviteData, error: inviteError } = await supabase
@@ -61,26 +62,28 @@ export default function InviteAccept() {
         .eq('code', code)
         .maybeSingle();
 
-      console.log('Invite query result:', { inviteData, inviteError });
+      console.log('📊 Invite query result:', { inviteData, inviteError });
 
       if (inviteError) {
-        console.error('Error fetching invite:', inviteError);
+        console.error('❌ Error fetching invite:', inviteError);
         setError('Failed to validate invite code.');
         return;
       }
 
       if (!inviteData) {
-        console.error('No invite found for code:', code);
+        console.error('❌ No invite found for code:', code);
         setError('Invalid or expired invite code.');
         return;
       }
 
       if (inviteData.used_at) {
+        console.log('❌ Invite already used:', inviteData.used_at);
         setError('This invite has already been used.');
         return;
       }
 
       if (new Date(inviteData.expires_at) < new Date()) {
+        console.log('❌ Invite expired:', inviteData.expires_at);
         setError('This invite has expired.');
         return;
       }
@@ -92,10 +95,11 @@ export default function InviteAccept() {
         .eq('id', inviteData.business_id)
         .maybeSingle();
 
-      console.log('Business query result:', { businessData, businessError });
+      console.log('🏢 Business query result:', { businessData, businessError });
 
       const businessName = businessData?.name || 'Unknown Business';
 
+      console.log('✅ Invite is valid, setting invite details');
       setInviteDetails({
         ...inviteData,
         business_name: businessName,
@@ -106,7 +110,7 @@ export default function InviteAccept() {
         setFormData(prev => ({ ...prev, email: inviteData.email! }));
       }
     } catch (error) {
-      console.error('Error validating invite:', error);
+      console.error('💥 Unexpected error validating invite:', error);
       setError('Failed to validate invite code.');
     } finally {
       setLoading(false);
