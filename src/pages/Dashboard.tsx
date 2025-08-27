@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogOut, Users, FileText, Building } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogOut, Users, FileText, Building, UserCheck, BarChart3 } from "lucide-react";
 import BusinessSetup from "@/components/team/BusinessSetup";
 import TeamManagement from "@/components/team/TeamManagement";
+import ClientList from "@/components/clients/ClientList";
 
 interface UserProfile {
   id: string;
@@ -31,7 +33,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [teamStats, setTeamStats] = useState({ memberCount: 0, formCount: 0, submissionCount: 0 });
+  const [teamStats, setTeamStats] = useState({ memberCount: 0, formCount: 0, submissionCount: 0, clientCount: 0 });
 
   useEffect(() => {
     if (user) {
@@ -109,6 +111,13 @@ export default function Dashboard() {
         .eq('business_id', businessId)
         .eq('is_active', true);
 
+      // Get client count
+      const { count: clientCount } = await supabase
+        .from('clients')
+        .select('*', { count: 'exact', head: true })
+        .eq('business_id', businessId)
+        .eq('is_active', true);
+
       // Get form count
       const { count: formCount } = await supabase
         .from('forms')
@@ -129,6 +138,7 @@ export default function Dashboard() {
 
       setTeamStats({
         memberCount: memberCount || 0,
+        clientCount: clientCount || 0,
         formCount: formCount || 0,
         submissionCount: submissionCount || 0
       });
@@ -213,53 +223,128 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teamStats.formCount}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {teamStats.formCount === 0 ? 'No active forms yet' : 'forms ready to use'}
-                  </p>
-                </CardContent>
-              </Card>
+            {/* Tabbed Interface */}
+            <Tabs defaultValue="overview" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="clients">Clients</TabsTrigger>
+                <TabsTrigger value="team">Team</TabsTrigger>
+                <TabsTrigger value="forms">Forms</TabsTrigger>
+                <TabsTrigger value="reports">Reports</TabsTrigger>
+              </TabsList>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teamStats.memberCount}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {teamStats.memberCount === 1 ? 'Just you so far' : 'active team members'}
-                  </p>
-                </CardContent>
-              </Card>
+              <TabsContent value="overview" className="space-y-4">
+                {/* Quick Stats */}
+                <div className="grid gap-6 md:grid-cols-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Clients</CardTitle>
+                      <UserCheck className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{teamStats.clientCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {teamStats.clientCount === 0 ? 'No clients yet' : 'active clients'}
+                      </p>
+                    </CardContent>
+                  </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Submissions</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teamStats.submissionCount}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {teamStats.submissionCount === 0 ? 'No submissions yet' : 'total submissions'}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{teamStats.memberCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {teamStats.memberCount === 1 ? 'Just you so far' : 'active team members'}
+                      </p>
+                    </CardContent>
+                  </Card>
 
-            {/* Team Management */}
-            <TeamManagement 
-              businessId={profile.business_id} 
-              userRole={profile.role || 'staff'} 
-            />
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{teamStats.formCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {teamStats.formCount === 0 ? 'No active forms yet' : 'forms ready to use'}
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Submissions</CardTitle>
+                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{teamStats.submissionCount}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {teamStats.submissionCount === 0 ? 'No submissions yet' : 'total submissions'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Recent Activity Placeholder */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recent Activity</CardTitle>
+                    <CardDescription>
+                      Latest updates from your healthcare forms platform.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Activity feed coming soon...</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="clients" className="space-y-4">
+                <ClientList businessId={profile.business_id} userRole={profile.role || 'staff'} />
+              </TabsContent>
+
+              <TabsContent value="team" className="space-y-4">
+                <TeamManagement businessId={profile.business_id} userRole={profile.role || 'staff'} />
+              </TabsContent>
+
+              <TabsContent value="forms" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Forms Management</CardTitle>
+                    <CardDescription>
+                      Create and manage healthcare forms for your organization.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Forms management coming in Phase 4...</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="reports" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Reports & Analytics</CardTitle>
+                    <CardDescription>
+                      View detailed reports and analytics for your organization.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Reports and analytics coming in Phase 6...</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </main>
