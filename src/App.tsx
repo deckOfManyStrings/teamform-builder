@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import InviteAccept from "./pages/InviteAccept";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route path="/invite/:code" element={<InviteAccept />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

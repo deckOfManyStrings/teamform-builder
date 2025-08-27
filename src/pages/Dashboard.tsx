@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, Users, FileText, Building } from "lucide-react";
+import BusinessSetup from "@/components/team/BusinessSetup";
+import TeamManagement from "@/components/team/TeamManagement";
 
 interface UserProfile {
   id: string;
@@ -16,10 +18,20 @@ interface UserProfile {
   is_active: boolean;
 }
 
+interface BusinessData {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  created_at: string;
+}
+
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [teamStats, setTeamStats] = useState({ memberCount: 0, formCount: 0, submissionCount: 0 });
 
   useEffect(() => {
     if (user) {
@@ -31,22 +43,102 @@ export default function Dashboard() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      // Try to get user profile
+      const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
+      if (userError && userError.code !== 'PGRST116') {
+        throw userError;
+      }
+
+      // If no profile exists, create one
+      if (!userData) {
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            first_name: user.user_metadata?.first_name || null,
+            last_name: user.user_metadata?.last_name || null,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        setProfile(newUser);
       } else {
-        setProfile(data);
+        setProfile(userData);
+
+        // If user has a business, fetch business data and stats
+        if (userData.business_id) {
+          await fetchBusinessData(userData.business_id);
+          await fetchTeamStats(userData.business_id);
+        }
       }
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchBusinessData = async (businessId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('id', businessId)
+        .single();
+
+      if (error) throw error;
+      setBusiness(data);
+    } catch (error) {
+      console.error('Error fetching business:', error);
+    }
+  };
+
+  const fetchTeamStats = async (businessId: string) => {
+    try {
+      // Get member count
+      const { count: memberCount } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('business_id', businessId)
+        .eq('is_active', true);
+
+      // Get form count
+      const { count: formCount } = await supabase
+        .from('forms')
+        .select('*', { count: 'exact', head: true })
+        .eq('business_id', businessId);
+
+      // Get submission count
+      const { count: submissionCount } = await supabase
+        .from('form_submissions')
+        .select('form_id', { count: 'exact', head: true })
+        .in('form_id', 
+          (await supabase
+            .from('forms')
+            .select('id')
+            .eq('business_id', businessId)
+          ).data?.map(f => f.id) || []
+        );
+
+      setTeamStats({
+        memberCount: memberCount || 0,
+        formCount: formCount || 0,
+        submissionCount: submissionCount || 0
+      });
+    } catch (error) {
+      console.error('Error fetching team stats:', error);
+    }
+  };
+
+  const handleBusinessCreated = () => {
+    fetchProfile(); // Refresh to get the new business association
   };
 
   const handleSignOut = async () => {
@@ -103,93 +195,73 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Welcome Card */}
-          <Card className="col-span-full">
-            <CardHeader>
-              <CardTitle>
+        {!profile?.business_id ? (
+          // No business setup yet
+          <div className="max-w-2xl mx-auto">
+            <BusinessSetup onBusinessCreated={handleBusinessCreated} />
+          </div>
+        ) : (
+          // Business exists, show dashboard
+          <div className="space-y-8">
+            {/* Welcome Section */}
+            <div>
+              <h2 className="text-3xl font-bold">
                 Welcome back, {profile?.first_name || 'User'}!
-              </CardTitle>
-              <CardDescription>
-                Here's what's happening with your healthcare forms today.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">
-                No active forms yet
+              </h2>
+              <p className="text-muted-foreground">
+                {business?.name} • {profile?.role?.charAt(0).toUpperCase()}{profile?.role?.slice(1)}
               </p>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1</div>
-              <p className="text-xs text-muted-foreground">
-                Just you so far
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Submissions</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">
-                No submissions yet
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Getting Started */}
-          <Card className="col-span-full">
-            <CardHeader>
-              <CardTitle>Getting Started</CardTitle>
-              <CardDescription>
-                Complete these steps to set up your healthcare forms system.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center space-x-4 p-4 border rounded-lg">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Building className="h-4 w-4 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium">Set up your organization</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Create or join an organization to start collaborating
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4 p-4 border rounded-lg">
-                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+            {/* Quick Stats */}
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium">Create your first form</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Build custom forms for data collection
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{teamStats.formCount}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {teamStats.formCount === 0 ? 'No active forms yet' : 'forms ready to use'}
                   </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{teamStats.memberCount}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {teamStats.memberCount === 1 ? 'Just you so far' : 'active team members'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Submissions</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{teamStats.submissionCount}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {teamStats.submissionCount === 0 ? 'No submissions yet' : 'total submissions'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Team Management */}
+            <TeamManagement 
+              businessId={profile.business_id} 
+              userRole={profile.role || 'staff'} 
+            />
+          </div>
+        )}
       </main>
     </div>
   );
