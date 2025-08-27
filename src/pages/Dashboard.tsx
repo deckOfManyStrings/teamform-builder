@@ -191,49 +191,82 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Building className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">Healthcare Forms</h1>
-          </div>
-          <div className="flex items-center space-x-4">
+      <header className="border-b bg-card sticky top-0 z-40">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          {/* Mobile Header Layout */}
+          <div className="flex items-center justify-between lg:hidden">
             <div className="flex items-center space-x-2">
-              <Avatar>
-                <AvatarFallback>
+              <Building className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <h1 className="text-lg sm:text-xl font-bold truncate">Healthcare Forms</h1>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="text-xs">
                   {getInitials(profile?.first_name, profile?.last_name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-sm">
-                <p className="font-medium">
-                  {profile?.first_name} {profile?.last_name}
-                </p>
-                <p className="text-muted-foreground capitalize">
-                  {profile?.role || 'Staff'}
-                </p>
-              </div>
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2">
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+          </div>
+          
+          {/* Desktop Header Layout */}
+          <div className="hidden lg:flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Building className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-bold">Healthcare Forms</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Avatar>
+                  <AvatarFallback>
+                    {getInitials(profile?.first_name, profile?.last_name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-sm">
+                  <p className="font-medium">
+                    {profile?.first_name} {profile?.last_name}
+                  </p>
+                  <p className="text-muted-foreground capitalize">
+                    {profile?.role || 'Staff'}
+                  </p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+          
+          {/* Mobile User Info */}
+          <div className="lg:hidden mt-2 flex items-center justify-between text-sm">
+            <div>
+              <p className="font-medium truncate">
+                {profile?.first_name} {profile?.last_name}
+              </p>
+              <p className="text-muted-foreground text-xs">
+                {business?.name} • {profile?.role?.charAt(0).toUpperCase()}{profile?.role?.slice(1)}
+              </p>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {!profile?.business_id ? (
           // No business setup yet
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto px-4">
             <BusinessSetup onBusinessCreated={handleBusinessCreated} />
           </div>
         ) : (
           // Business exists, show dashboard
-          <div className="space-y-8">
-            {/* Welcome Section */}
-            <div>
-              <h2 className="text-3xl font-bold">
+          <div className="space-y-4 sm:space-y-8">
+            {/* Welcome Section - Hidden on mobile, shown in header instead */}
+            <div className="hidden lg:block">
+              <h2 className="text-2xl sm:text-3xl font-bold">
                 Welcome back, {profile?.first_name || 'User'}!
               </h2>
               <p className="text-muted-foreground">
@@ -243,18 +276,33 @@ export default function Dashboard() {
 
             {/* Tabbed Interface */}
             <Tabs defaultValue="overview" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="clients">Clients</TabsTrigger>
-                <TabsTrigger value="forms">Forms</TabsTrigger>
-                <TabsTrigger value="submissions">Submissions</TabsTrigger>
-                <TabsTrigger value="team">Team</TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
-              </TabsList>
+              {/* Mobile Scrollable Tabs */}
+              <div className="lg:hidden">
+                <TabsList className="w-full justify-start overflow-x-auto">
+                  <TabsTrigger value="overview" className="whitespace-nowrap">Overview</TabsTrigger>
+                  <TabsTrigger value="clients" className="whitespace-nowrap">Clients</TabsTrigger>
+                  <TabsTrigger value="forms" className="whitespace-nowrap">Forms</TabsTrigger>
+                  <TabsTrigger value="submissions" className="whitespace-nowrap">Submissions</TabsTrigger>
+                  <TabsTrigger value="team" className="whitespace-nowrap">Team</TabsTrigger>
+                  <TabsTrigger value="reports" className="whitespace-nowrap">Reports</TabsTrigger>
+                </TabsList>
+              </div>
+              
+              {/* Desktop Tabs */}
+              <div className="hidden lg:block">
+                <TabsList>
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="clients">Clients</TabsTrigger>
+                  <TabsTrigger value="forms">Forms</TabsTrigger>
+                  <TabsTrigger value="submissions">Submissions</TabsTrigger>
+                  <TabsTrigger value="team">Team</TabsTrigger>
+                  <TabsTrigger value="reports">Reports</TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="overview" className="space-y-4">
                 {/* Quick Stats */}
-                <div className="grid gap-6 md:grid-cols-5">
+                <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-5">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">Clients</CardTitle>
