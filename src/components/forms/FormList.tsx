@@ -6,12 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Plus, Search, Edit, Eye, Copy, Trash2, Download } from "lucide-react";
+import { FileText, Plus, Search, Edit, Eye, Copy, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import FormBuilder from "./FormBuilder";
 import FormPreview from "./FormPreview";
-import { exportToCSV, flattenFormSubmissionData } from "@/lib/exportUtils";
 
 interface Form {
   id: string;
@@ -215,78 +214,6 @@ export default function FormList({ businessId, userRole }: FormListProps) {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const exportFormSubmissions = async (form: Form) => {
-    try {
-      // Get all submissions for this specific form
-      const { data: submissions, error: submissionsError } = await supabase
-        .from('form_submissions')
-        .select(`
-          *,
-          clients(name, medical_record_number, date_of_birth, contact_info),
-          users!form_submissions_submitted_by_fkey(first_name, last_name, email)
-        `)
-        .eq('form_id', form.id)
-        .order('created_at', { ascending: false });
-
-      if (submissionsError) throw submissionsError;
-
-      if (!submissions || submissions.length === 0) {
-        toast({
-          title: "No Data",
-          description: `No submissions found for form "${form.title}".`,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Flatten and format the data for export
-      const exportData = submissions.map((submission: any) => {
-        const flattened = flattenFormSubmissionData(submission);
-        
-        // Add form and client data
-        flattened.form_title = form.title;
-        flattened.form_description = form.description || '';
-        flattened.client_name = submission.clients?.name || 'No Client';
-        flattened.client_medical_record = submission.clients?.medical_record_number || '';
-        flattened.client_date_of_birth = submission.clients?.date_of_birth || '';
-        
-        // Add contact info if available
-        if (submission.clients?.contact_info) {
-          flattened.client_email = submission.clients.contact_info.email || '';
-          flattened.client_phone = submission.clients.contact_info.phone || '';
-          flattened.client_address = submission.clients.contact_info.address || '';
-        }
-        
-        flattened.submitted_by_name = submission.users 
-          ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim()
-          : 'Unknown User';
-        flattened.submitted_by_email = submission.users?.email || '';
-
-        // Remove nested objects
-        delete flattened.clients;
-        delete flattened.users;
-
-        return flattened;
-      });
-
-      const filename = `form_${form.title.replace(/[^a-z0-9]/gi, '_')}_submissions_${new Date().toISOString().split('T')[0]}`;
-      exportToCSV(exportData, filename);
-
-      toast({
-        title: "Export Successful",
-        description: `Exported ${exportData.length} submissions for "${form.title}".`,
-      });
-
-    } catch (error) {
-      console.error('Error exporting form submissions:', error);
-      toast({
-        title: "Export Failed",
-        description: "Failed to export form submissions. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (loading) {
     return (
       <Card>
@@ -377,14 +304,6 @@ export default function FormList({ businessId, userRole }: FormListProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => exportFormSubmissions(form)}
-                      title="Export all submissions for this form"
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
