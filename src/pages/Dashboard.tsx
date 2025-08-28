@@ -371,7 +371,7 @@ export default function Dashboard() {
                   </Card>
                 </div>
 
-                {/* Recent Activity Placeholder */}
+                {/* Recent Activity */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Recent Activity</CardTitle>
@@ -380,8 +380,25 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Activity feed coming soon...</p>
+                    <div className="space-y-4">
+                      {teamStats.submissionCount > 0 ? (
+                        <div className="text-sm text-muted-foreground">
+                          <p>✓ {teamStats.submissionCount} total form submissions</p>
+                          {teamStats.pendingReview > 0 && (
+                            <p className="text-orange-600">⏳ {teamStats.pendingReview} submissions pending review</p>
+                          )}
+                          {teamStats.clientCount > 0 && (
+                            <p>👥 {teamStats.clientCount} active clients</p>
+                          )}
+                          {teamStats.formCount > 0 && (
+                            <p>📋 {teamStats.formCount} active forms</p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4 text-muted-foreground">
+                          <p>No activity yet. Start by creating a form and adding clients!</p>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
