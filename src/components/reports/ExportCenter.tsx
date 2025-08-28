@@ -369,7 +369,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
         .lte('created_at', `${endDate}T23:59:59.999Z`);
 
       // Add client filter if selected
-      if (selectedPivotClient) {
+      if (selectedPivotClient && selectedPivotClient !== "all") {
         query = query.eq('client_id', selectedPivotClient);
       }
 
@@ -378,7 +378,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
       if (error) throw error;
 
       if (!submissions || submissions.length === 0) {
-        const clientFilter = selectedPivotClient 
+        const clientFilter = selectedPivotClient && selectedPivotClient !== "all"
           ? ` for the selected patient`
           : '';
         toast({
@@ -397,13 +397,13 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
 
       const pivotData = createPivotTableExport(submissionsWithSchema, startDate, endDate);
 
-      const clientSuffix = selectedPivotClient 
+      const clientSuffix = selectedPivotClient && selectedPivotClient !== "all"
         ? `_${clients.find(c => c.id === selectedPivotClient)?.name.replace(/[^a-z0-9]/gi, '_')}`
         : '';
       const filename = `pivot_${form?.title.replace(/[^a-z0-9]/gi, '_')}_${startDate}_to_${endDate}${clientSuffix}`;
       exportToCSV(pivotData, filename);
 
-      const clientInfo = selectedPivotClient 
+      const clientInfo = selectedPivotClient && selectedPivotClient !== "all"
         ? ` for ${clients.find(c => c.id === selectedPivotClient)?.name}`
         : '';
       toast({
@@ -620,7 +620,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                           <SelectValue placeholder="All patients" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
-                          <SelectItem value="">All patients</SelectItem>
+                          <SelectItem value="all">All patients</SelectItem>
                           {clients.map((client) => (
                             <SelectItem key={client.id} value={client.id}>
                               <div className="flex items-center gap-2">
