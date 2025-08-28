@@ -110,9 +110,6 @@ export const createSimplifiedFormExport = (submission: any, formSchema: any) => 
 export const createPivotTableExport = (submissions: any[], startDate: string, endDate: string) => {
   if (!submissions || submissions.length === 0) return [];
 
-  // Get form name from first submission
-  const formName = submissions[0]?.forms?.title || 'Unknown Form';
-
   // Generate date range
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -136,20 +133,6 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
   // Create pivot table data
   const pivotData: any[] = [];
 
-  // Add form name as first row
-  const formNameRow: any = { 'Field': `Form: ${formName}` };
-  dateColumns.forEach(date => {
-    formNameRow[date] = '';
-  });
-  pivotData.push(formNameRow);
-
-  // Add empty separator row
-  const separatorRow: any = { 'Field': '' };
-  dateColumns.forEach(date => {
-    separatorRow[date] = '';
-  });
-  pivotData.push(separatorRow);
-
   // Group submissions by date
   const submissionsByDate = new Map();
   submissions.forEach(submission => {
@@ -162,7 +145,25 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
 
   // Create a row for each field
   allFields.forEach((fieldLabel, fieldId) => {
-    const row: any = { 'Field': fieldLabel };
+    // Get all unique submitters for this field
+    const submitters = new Set();
+    dateColumns.forEach(date => {
+      const daySubmissions = submissionsByDate.get(date) || [];
+      daySubmissions.forEach(submission => {
+        const value = submission.submission_data[fieldId];
+        if (value !== undefined && value !== null && value !== '') {
+          const submitterName = submission.users 
+            ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim() || 'Unknown User'
+            : 'Unknown User';
+          submitters.add(submitterName);
+        }
+      });
+    });
+
+    const row: any = { 
+      'Field': fieldLabel,
+      'Submitted By': Array.from(submitters).join(', ')
+    };
     
     dateColumns.forEach(date => {
       const daySubmissions = submissionsByDate.get(date) || [];
@@ -170,18 +171,12 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
       
       daySubmissions.forEach(submission => {
         const value = submission.submission_data[fieldId];
-        const submitterName = submission.users 
-          ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim() || 'Unknown User'
-          : 'Unknown User';
-        
         if (value !== undefined && value !== null && value !== '') {
-          let displayValue = '';
           if (Array.isArray(value)) {
-            displayValue = value.join(', ');
+            entries.push(value.join(', '));
           } else {
-            displayValue = String(value);
+            entries.push(String(value));
           }
-          entries.push(`${submitterName}: ${displayValue}`);
         }
       });
       
