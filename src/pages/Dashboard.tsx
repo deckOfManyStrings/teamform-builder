@@ -191,21 +191,23 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-40">
+      <header className="border-b bg-gradient-card sticky top-0 z-40 backdrop-blur-md">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           {/* Mobile Header Layout */}
           <div className="flex items-center justify-between lg:hidden">
             <div className="flex items-center space-x-2">
-              <Building className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-              <h1 className="text-lg sm:text-xl font-bold truncate">Healthcare Forms</h1>
+              <div className="bg-gradient-primary p-2 rounded-lg">
+                <Building className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+              </div>
+              <h1 className="text-lg sm:text-xl font-jakarta font-bold truncate">Healthcare Forms</h1>
             </div>
             <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs">
+              <Avatar className="h-8 w-8 border-2 border-primary/20">
+                <AvatarFallback className="text-xs bg-gradient-primary text-primary-foreground font-medium">
                   {getInitials(profile?.first_name, profile?.last_name)}
                 </AvatarFallback>
               </Avatar>
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2">
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2 hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -214,18 +216,23 @@ export default function Dashboard() {
           {/* Desktop Header Layout */}
           <div className="hidden lg:flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Building className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold">Healthcare Forms</h1>
+              <div className="bg-gradient-primary p-3 rounded-xl shadow-glow">
+                <Building className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-jakarta font-bold">Healthcare Forms</h1>
+                <p className="text-sm text-muted-foreground">Professional Form Management</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Avatar>
-                  <AvatarFallback>
+              <div className="flex items-center space-x-3 bg-card border border-border rounded-lg px-4 py-2">
+                <Avatar className="border-2 border-primary/20">
+                  <AvatarFallback className="bg-gradient-primary text-primary-foreground font-medium">
                     {getInitials(profile?.first_name, profile?.last_name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-sm">
-                  <p className="font-medium">
+                  <p className="font-medium font-jakarta">
                     {profile?.first_name} {profile?.last_name}
                   </p>
                   <p className="text-muted-foreground capitalize">
@@ -233,7 +240,12 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSignOut}
+                className="border-destructive/20 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all duration-200"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </Button>
@@ -243,7 +255,7 @@ export default function Dashboard() {
           {/* Mobile User Info */}
           <div className="lg:hidden mt-2 flex items-center justify-between text-sm">
             <div>
-              <p className="font-medium truncate">
+              <p className="font-medium font-jakarta truncate">
                 {profile?.first_name} {profile?.last_name}
               </p>
               <p className="text-muted-foreground text-xs">
@@ -258,20 +270,25 @@ export default function Dashboard() {
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {!profile?.business_id ? (
           // No business setup yet
-          <div className="max-w-2xl mx-auto px-4">
+          <div className="max-w-2xl mx-auto px-4 animate-fade-in">
             <BusinessSetup onBusinessCreated={handleBusinessCreated} />
           </div>
         ) : (
           // Business exists, show dashboard
-          <div className="space-y-4 sm:space-y-8">
+          <div className="space-y-4 sm:space-y-8 animate-fade-in">
             {/* Welcome Section - Hidden on mobile, shown in header instead */}
             <div className="hidden lg:block">
-              <h2 className="text-2xl sm:text-3xl font-bold">
-                Welcome back, {profile?.first_name || 'User'}!
-              </h2>
-              <p className="text-muted-foreground">
-                {business?.name} • {profile?.role?.charAt(0).toUpperCase()}{profile?.role?.slice(1)}
-              </p>
+              <div className="bg-gradient-card p-6 rounded-2xl border border-border/50 shadow-soft">
+                <h2 className="text-3xl font-jakarta font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  Welcome back, {profile?.first_name || 'User'}!
+                </h2>
+                <p className="text-muted-foreground mt-1 flex items-center gap-2">
+                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium">
+                    {business?.name}
+                  </span>
+                  • {profile?.role?.charAt(0).toUpperCase()}{profile?.role?.slice(1)}
+                </p>
+              </div>
             </div>
 
             {/* Tabbed Interface */}
@@ -279,91 +296,101 @@ export default function Dashboard() {
               {/* Mobile Scrollable Tabs - Fixed horizontal scroll */}
               <div className="lg:hidden -mx-2 px-2">
                 <div className="overflow-x-auto scrollbar-hide">
-                  <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground min-w-max">
-                    <TabsTrigger value="overview" className="whitespace-nowrap px-3 py-1.5 text-sm">Overview</TabsTrigger>
-                    <TabsTrigger value="clients" className="whitespace-nowrap px-3 py-1.5 text-sm">Clients</TabsTrigger>
-                    <TabsTrigger value="forms" className="whitespace-nowrap px-3 py-1.5 text-sm">Forms</TabsTrigger>
-                    <TabsTrigger value="submissions" className="whitespace-nowrap px-3 py-1.5 text-sm">Submissions</TabsTrigger>
-                    <TabsTrigger value="team" className="whitespace-nowrap px-3 py-1.5 text-sm">Team</TabsTrigger>
-                    <TabsTrigger value="reports" className="whitespace-nowrap px-3 py-1.5 text-sm">Reports</TabsTrigger>
+                  <TabsList className="inline-flex h-10 items-center justify-start rounded-xl bg-muted/50 backdrop-blur-sm p-1 text-muted-foreground min-w-max border border-border/50">
+                    <TabsTrigger value="overview" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Overview</TabsTrigger>
+                    <TabsTrigger value="clients" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Clients</TabsTrigger>
+                    <TabsTrigger value="forms" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Forms</TabsTrigger>
+                    <TabsTrigger value="submissions" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Submissions</TabsTrigger>
+                    <TabsTrigger value="team" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Team</TabsTrigger>
+                    <TabsTrigger value="reports" className="whitespace-nowrap px-4 py-1.5 text-sm rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Reports</TabsTrigger>
                   </TabsList>
                 </div>
               </div>
               
               {/* Desktop Tabs */}
               <div className="hidden lg:block">
-                <TabsList className="grid w-full grid-cols-6">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="clients">Clients</TabsTrigger>
-                  <TabsTrigger value="forms">Forms</TabsTrigger>
-                  <TabsTrigger value="submissions">Submissions</TabsTrigger>
-                  <TabsTrigger value="team">Team</TabsTrigger>
-                  <TabsTrigger value="reports">Reports</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-6 bg-muted/50 backdrop-blur-sm rounded-xl p-1 border border-border/50">
+                  <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Overview</TabsTrigger>
+                  <TabsTrigger value="clients" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Clients</TabsTrigger>
+                  <TabsTrigger value="forms" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Forms</TabsTrigger>
+                  <TabsTrigger value="submissions" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Submissions</TabsTrigger>
+                  <TabsTrigger value="team" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Team</TabsTrigger>
+                  <TabsTrigger value="reports" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all duration-200">Reports</TabsTrigger>
                 </TabsList>
               </div>
 
-              <TabsContent value="overview" className="space-y-4">
+              <TabsContent value="overview" className="space-y-6 animate-slide-up">
                 {/* Quick Stats */}
-                <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-5">
-                  <Card>
+                <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-5">
+                  <Card className="card-enhanced group">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Clients</CardTitle>
-                      <UserCheck className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Clients</CardTitle>
+                      <div className="p-2 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors">
+                        <UserCheck className="h-4 w-4 text-accent" />
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{teamStats.clientCount}</div>
+                      <div className="text-2xl font-bold font-jakarta">{teamStats.clientCount}</div>
                       <p className="text-xs text-muted-foreground">
                         {teamStats.clientCount === 0 ? 'No clients yet' : 'active clients'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="card-enhanced group">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Team Members</CardTitle>
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <Users className="h-4 w-4 text-primary" />
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{teamStats.memberCount}</div>
+                      <div className="text-2xl font-bold font-jakarta">{teamStats.memberCount}</div>
                       <p className="text-xs text-muted-foreground">
                         {teamStats.memberCount === 1 ? 'Just you so far' : 'active team members'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="card-enhanced group">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
-                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Active Forms</CardTitle>
+                      <div className="p-2 bg-info/10 rounded-lg group-hover:bg-info/20 transition-colors">
+                        <FileText className="h-4 w-4 text-info" />
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{teamStats.formCount}</div>
+                      <div className="text-2xl font-bold font-jakarta">{teamStats.formCount}</div>
                       <p className="text-xs text-muted-foreground">
                         {teamStats.formCount === 0 ? 'No active forms yet' : 'forms ready to use'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="card-enhanced group">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Submissions</CardTitle>
-                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Submissions</CardTitle>
+                      <div className="p-2 bg-success/10 rounded-lg group-hover:bg-success/20 transition-colors">
+                        <BarChart3 className="h-4 w-4 text-success" />
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{teamStats.submissionCount}</div>
+                      <div className="text-2xl font-bold font-jakarta">{teamStats.submissionCount}</div>
                       <p className="text-xs text-muted-foreground">
                         {teamStats.submissionCount === 0 ? 'No submissions yet' : 'total submissions'}
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="card-enhanced group">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
-                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
+                      <div className="p-2 bg-warning/10 rounded-lg group-hover:bg-warning/20 transition-colors">
+                        <BarChart3 className="h-4 w-4 text-warning" />
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{teamStats.pendingReview}</div>
+                      <div className="text-2xl font-bold font-jakarta">{teamStats.pendingReview}</div>
                       <p className="text-xs text-muted-foreground">
                         submissions awaiting review
                       </p>
@@ -372,9 +399,14 @@ export default function Dashboard() {
                 </div>
 
                 {/* Recent Activity */}
-                <Card>
+                <Card className="card-enhanced">
                   <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <BarChart3 className="h-5 w-5 text-primary" />
+                      </div>
+                      Recent Activity
+                    </CardTitle>
                     <CardDescription>
                       Latest updates from your healthcare forms platform.
                     </CardDescription>
@@ -382,21 +414,45 @@ export default function Dashboard() {
                   <CardContent>
                     <div className="space-y-4">
                       {teamStats.submissionCount > 0 ? (
-                        <div className="text-sm text-muted-foreground">
-                          <p>✓ {teamStats.submissionCount} total form submissions</p>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3 p-3 bg-accent/5 rounded-lg border border-accent/20">
+                            <div className="p-1 bg-accent/20 rounded-full">
+                              <FileText className="h-3 w-3 text-accent" />
+                            </div>
+                            <span className="text-sm">✓ {teamStats.submissionCount} total form submissions</span>
+                          </div>
                           {teamStats.pendingReview > 0 && (
-                            <p className="text-orange-600">⏳ {teamStats.pendingReview} submissions pending review</p>
+                            <div className="flex items-center gap-3 p-3 bg-warning/5 rounded-lg border border-warning/20">
+                              <div className="p-1 bg-warning/20 rounded-full animate-pulse-soft">
+                                <BarChart3 className="h-3 w-3 text-warning" />
+                              </div>
+                              <span className="text-sm text-warning">⏳ {teamStats.pendingReview} submissions pending review</span>
+                            </div>
                           )}
                           {teamStats.clientCount > 0 && (
-                            <p>👥 {teamStats.clientCount} active clients</p>
+                            <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                              <div className="p-1 bg-primary/20 rounded-full">
+                                <Users className="h-3 w-3 text-primary" />
+                              </div>
+                              <span className="text-sm">👥 {teamStats.clientCount} active clients</span>
+                            </div>
                           )}
                           {teamStats.formCount > 0 && (
-                            <p>📋 {teamStats.formCount} active forms</p>
+                            <div className="flex items-center gap-3 p-3 bg-info/5 rounded-lg border border-info/20">
+                              <div className="p-1 bg-info/20 rounded-full">
+                                <FileText className="h-3 w-3 text-info" />
+                              </div>
+                              <span className="text-sm">📋 {teamStats.formCount} active forms</span>
+                            </div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-center py-4 text-muted-foreground">
-                          <p>No activity yet. Start by creating a form and adding clients!</p>
+                        <div className="text-center py-8">
+                          <div className="p-4 bg-muted/50 rounded-xl border-2 border-dashed border-border inline-block">
+                            <BarChart3 className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-muted-foreground font-medium">No activity yet</p>
+                            <p className="text-sm text-muted-foreground">Start by creating a form and adding clients!</p>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -404,23 +460,23 @@ export default function Dashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="clients" className="space-y-4">
+              <TabsContent value="clients" className="space-y-4 animate-slide-up">
                 <ClientList businessId={profile.business_id} userRole={profile.role || 'staff'} />
               </TabsContent>
 
-              <TabsContent value="submissions" className="space-y-4">
+              <TabsContent value="submissions" className="space-y-4 animate-slide-up">
                 <SubmissionList businessId={profile.business_id} userRole={profile.role || 'staff'} />
               </TabsContent>
 
-              <TabsContent value="team" className="space-y-4">
+              <TabsContent value="team" className="space-y-4 animate-slide-up">
                 <TeamManagement businessId={profile.business_id} userRole={profile.role || 'staff'} />
               </TabsContent>
 
-              <TabsContent value="forms" className="space-y-4">
+              <TabsContent value="forms" className="space-y-4 animate-slide-up">
                 <FormList businessId={profile.business_id} userRole={profile.role || 'staff'} />
               </TabsContent>
 
-              <TabsContent value="reports" className="space-y-4">
+              <TabsContent value="reports" className="space-y-4 animate-slide-up">
                 <div className="space-y-6">
                   <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
                   <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
