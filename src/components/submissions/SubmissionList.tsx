@@ -33,6 +33,14 @@ interface Form {
   title: string;
   status: string;
   description?: string | null;
+  fields_schema?: {
+    fields: Array<{
+      id: string;
+      type: string;
+      label: string;
+      options?: string[];
+    }>;
+  };
 }
 
 interface Client {
@@ -95,7 +103,7 @@ export default function SubmissionList({ businessId, userRole }: SubmissionListP
       // Get all forms for this business first
       const { data: forms, error: formsError } = await supabase
         .from('forms')
-        .select('id, title, status')
+        .select('id, title, status, fields_schema')
         .eq('business_id', businessId);
 
       if (formsError) throw formsError;
@@ -135,7 +143,11 @@ export default function SubmissionList({ businessId, userRole }: SubmissionListP
 
       // Combine the data
       const submissionsWithDetails: SubmissionWithDetails[] = (submissionsData || []).map(submission => {
-        const form = forms.find(f => f.id === submission.form_id);
+        const formData = forms.find(f => f.id === submission.form_id);
+        const form = formData ? {
+          ...formData,
+          fields_schema: formData.fields_schema as any
+        } : undefined;
         const client = clients?.find(c => c.id === submission.client_id);
         const submittedByUser = users?.find(u => u.id === submission.submitted_by);
         const reviewedByUser = users?.find(u => u.id === submission.reviewed_by);
