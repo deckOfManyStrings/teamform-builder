@@ -200,7 +200,7 @@ export default function Dashboard() {
                 <Building className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-slate-900">MediForm</h1>
+                <h1 className="text-lg font-semibold text-slate-900">Vendor Forms</h1>
                 <p className="text-xs text-slate-500">Enterprise</p>
               </div>
             </div>
@@ -223,8 +223,8 @@ export default function Dashboard() {
                 <Building className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">MediForm Enterprise</h1>
-                <p className="text-sm text-slate-500">Healthcare Form Management Platform</p>
+                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Vendor Forms Enterprise</h1>
+                <p className="text-sm text-slate-500">Vendor Management & Forms Platform</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -312,7 +312,7 @@ export default function Dashboard() {
                   <div className="overflow-x-auto scrollbar-hide">
                     <TabsList className="inline-flex h-11 items-center justify-start bg-white border border-slate-200 rounded-lg p-1 text-slate-600 min-w-max shadow-sm">
                       <TabsTrigger value="overview" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Overview</TabsTrigger>
-                      <TabsTrigger value="clients" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Clients</TabsTrigger>
+                      <TabsTrigger value="clients" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Vendors</TabsTrigger>
                       <TabsTrigger value="forms" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Forms</TabsTrigger>
                       <TabsTrigger value="submissions" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Submissions</TabsTrigger>
                       <TabsTrigger value="team" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Team</TabsTrigger>
@@ -325,7 +325,7 @@ export default function Dashboard() {
                 <div className="hidden lg:block">
                   <TabsList className="grid w-full grid-cols-6 bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
                     <TabsTrigger value="overview" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Overview</TabsTrigger>
-                    <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Clients</TabsTrigger>
+                    <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Vendors</TabsTrigger>
                     <TabsTrigger value="forms" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Forms</TabsTrigger>
                     <TabsTrigger value="submissions" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Submissions</TabsTrigger>
                     <TabsTrigger value="team" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Team</TabsTrigger>
@@ -338,7 +338,7 @@ export default function Dashboard() {
                   <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
                     <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Active Clients</CardTitle>
+                        <CardTitle className="text-sm font-medium text-slate-600">Active Vendors</CardTitle>
                         <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
                           <UserCheck className="h-4 w-4 text-green-600" />
                         </div>
@@ -346,7 +346,7 @@ export default function Dashboard() {
                       <CardContent className="pt-0">
                         <div className="text-2xl font-semibold text-slate-900">{teamStats.clientCount}</div>
                         <p className="text-xs text-slate-500 mt-1">
-                          {teamStats.clientCount === 0 ? 'No clients registered' : 'registered clients'}
+                          {teamStats.clientCount === 0 ? 'No vendors registered' : 'registered vendors'}
                         </p>
                       </CardContent>
                     </Card>
@@ -427,9 +427,9 @@ export default function Dashboard() {
                         </div>
                         System Overview
                       </CardTitle>
-                      <CardDescription className="text-slate-500">
-                        Current status of your healthcare form management system
-                      </CardDescription>
+                    <CardDescription className="text-slate-500">
+                      Current status of your vendor management system
+                    </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
                       <div className="space-y-4">
@@ -467,7 +467,7 @@ export default function Dashboard() {
                                   <Users className="h-4 w-4 text-blue-700" />
                                 </div>
                                 <span className="text-sm font-medium text-blue-800">
-                                  Active client registrations
+                                  Active vendor registrations
                                 </span>
                               </div>
                               <span className="text-lg font-semibold text-blue-900">{teamStats.clientCount}</span>
@@ -491,7 +491,7 @@ export default function Dashboard() {
                               <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                               <p className="text-slate-600 font-medium mb-2">Getting Started</p>
                               <p className="text-sm text-slate-500 max-w-sm mx-auto">
-                                Begin by creating form templates and registering clients to start collecting healthcare data.
+                                Begin by creating form templates and registering vendors to start collecting vendor data.
                               </p>
                             </div>
                           </div>
