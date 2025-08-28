@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Download, FileText, Users, User, FormInput } from "lucide-react";
-import { exportToCSV, flattenFormSubmissionData, flattenClientData } from "@/lib/exportUtils";
+import { exportToCSV, createSimplifiedFormExport, flattenClientData } from "@/lib/exportUtils";
 
 interface Form {
   id: string;
@@ -91,8 +91,8 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
         .from('form_submissions')
         .select(`
           *,
-          forms!inner(title, description),
-          clients(name, medical_record_number, date_of_birth),
+          forms!inner(title, fields_schema),
+          clients(name),
           users!form_submissions_submitted_by_fkey(first_name, last_name, email)
         `)
         .in('form_id', formIds)
@@ -111,22 +111,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
       }
 
       const exportData = submissions.map((submission: any) => {
-        const flattened = flattenFormSubmissionData(submission);
-        flattened.form_title = submission.forms?.title || 'Unknown Form';
-        flattened.form_description = submission.forms?.description || '';
-        flattened.client_name = submission.clients?.name || 'No Client';
-        flattened.client_medical_record = submission.clients?.medical_record_number || '';
-        flattened.client_date_of_birth = submission.clients?.date_of_birth || '';
-        flattened.submitted_by_name = submission.users 
-          ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim()
-          : 'Unknown User';
-        flattened.submitted_by_email = submission.users?.email || '';
-
-        delete flattened.forms;
-        delete flattened.clients;
-        delete flattened.users;
-
-        return flattened;
+        return createSimplifiedFormExport(submission, submission.forms?.fields_schema);
       });
 
       const filename = `all_form_submissions_${new Date().toISOString().split('T')[0]}`;
@@ -223,7 +208,8 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
         .from('form_submissions')
         .select(`
           *,
-          clients(name, medical_record_number, date_of_birth, contact_info),
+          forms!inner(title, fields_schema),
+          clients(name),
           users!form_submissions_submitted_by_fkey(first_name, last_name, email)
         `)
         .eq('form_id', selectedForm)
@@ -241,29 +227,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
       }
 
       const exportData = submissions.map((submission: any) => {
-        const flattened = flattenFormSubmissionData(submission);
-        flattened.form_title = form?.title || 'Unknown Form';
-        flattened.form_description = form?.description || '';
-        flattened.client_name = submission.clients?.name || 'No Client';
-        flattened.client_medical_record = submission.clients?.medical_record_number || '';
-        flattened.client_date_of_birth = submission.clients?.date_of_birth || '';
-        
-        if (submission.clients?.contact_info && typeof submission.clients.contact_info === 'object') {
-          const contactInfo = submission.clients.contact_info as any;
-          flattened.client_email = contactInfo.email || '';
-          flattened.client_phone = contactInfo.phone || '';
-          flattened.client_address = contactInfo.address || '';
-        }
-        
-        flattened.submitted_by_name = submission.users 
-          ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim()
-          : 'Unknown User';
-        flattened.submitted_by_email = submission.users?.email || '';
-
-        delete flattened.clients;
-        delete flattened.users;
-
-        return flattened;
+        return createSimplifiedFormExport(submission, submission.forms?.fields_schema);
       });
 
       const filename = `form_${form?.title.replace(/[^a-z0-9]/gi, '_')}_submissions_${new Date().toISOString().split('T')[0]}`;
@@ -314,7 +278,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
         .from('form_submissions')
         .select(`
           *,
-          forms!inner(title, description),
+          forms!inner(title, fields_schema),
           users!form_submissions_submitted_by_fkey(first_name, last_name, email)
         `)
         .eq('client_id', selectedClient)
@@ -332,29 +296,10 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
       }
 
       const exportData = submissions.map((submission: any) => {
-        const flattened = flattenFormSubmissionData(submission);
-        flattened.client_name = client?.name || 'Unknown Client';
-        flattened.client_medical_record = clientData?.medical_record_number || '';
-        flattened.client_date_of_birth = clientData?.date_of_birth || '';
-        
-        if (clientData?.contact_info && typeof clientData.contact_info === 'object') {
-          const contactInfo = clientData.contact_info as any;
-          flattened.client_email = contactInfo.email || '';
-          flattened.client_phone = contactInfo.phone || '';
-          flattened.client_address = contactInfo.address || '';
-        }
-        
-        flattened.form_title = submission.forms?.title || 'Unknown Form';
-        flattened.form_description = submission.forms?.description || '';
-        flattened.submitted_by_name = submission.users 
-          ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim()
-          : 'Unknown User';
-        flattened.submitted_by_email = submission.users?.email || '';
-
-        delete flattened.forms;
-        delete flattened.users;
-
-        return flattened;
+        const exportRow = createSimplifiedFormExport(submission, submission.forms?.fields_schema);
+        // Override client name for consistency 
+        exportRow['Client Name'] = client?.name || 'Unknown Client';
+        return exportRow;
       });
 
       const filename = `patient_${client?.name.replace(/[^a-z0-9]/gi, '_')}_forms_${new Date().toISOString().split('T')[0]}`;

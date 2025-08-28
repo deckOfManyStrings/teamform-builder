@@ -78,6 +78,35 @@ export const flattenFormSubmissionData = (submission: any) => {
   return flatSubmission;
 };
 
+export const createSimplifiedFormExport = (submission: any, formSchema: any) => {
+  const exportRow: any = {};
+  
+  // Add submitter info
+  if (submission.users) {
+    exportRow['Submitted By'] = `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim() || 'Unknown User';
+  } else {
+    exportRow['Submitted By'] = 'Unknown User';
+  }
+  
+  // Add client info
+  if (submission.clients) {
+    exportRow['Client Name'] = submission.clients.name || 'No Client';
+  } else {
+    exportRow['Client Name'] = 'No Client';
+  }
+  
+  // Add form fields with their labels and answers
+  if (formSchema?.fields && submission.submission_data) {
+    formSchema.fields.forEach((field: any) => {
+      const fieldLabel = field.label || field.name || 'Unknown Field';
+      const fieldValue = submission.submission_data[field.name] || '';
+      exportRow[fieldLabel] = fieldValue;
+    });
+  }
+  
+  return exportRow;
+};
+
 export const flattenClientData = (client: any) => {
   const flatClient = { ...client };
   
