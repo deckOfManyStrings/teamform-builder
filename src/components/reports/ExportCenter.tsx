@@ -37,6 +37,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedForm, setSelectedForm] = useState<string>("");
   const [selectedClient, setSelectedClient] = useState<string>("");
+  const [selectedPivotClient, setSelectedPivotClient] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState(() => {
     const date = new Date();
@@ -356,7 +357,7 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
 
       if (formError) throw formError;
 
-      const { data: submissions, error } = await supabase
+      let query = supabase
         .from('form_submissions')
         .select(`
           *,
@@ -365,15 +366,24 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
         `)
         .eq('form_id', selectedForm)
         .gte('created_at', `${startDate}T00:00:00.000Z`)
-        .lte('created_at', `${endDate}T23:59:59.999Z`)
-        .order('created_at', { ascending: false });
+        .lte('created_at', `${endDate}T23:59:59.999Z`);
+
+      // Add client filter if selected
+      if (selectedPivotClient) {
+        query = query.eq('client_id', selectedPivotClient);
+      }
+
+      const { data: submissions, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
 
       if (!submissions || submissions.length === 0) {
+        const clientFilter = selectedPivotClient 
+          ? ` for the selected patient`
+          : '';
         toast({
           title: "No Data",
-          description: `No submissions found for "${form?.title}" in the selected date range.`,
+          description: `No submissions found for "${form?.title}" in the selected date range${clientFilter}.`,
           variant: "destructive",
         });
         return;
@@ -387,12 +397,18 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
 
       const pivotData = createPivotTableExport(submissionsWithSchema, startDate, endDate);
 
-      const filename = `pivot_${form?.title.replace(/[^a-z0-9]/gi, '_')}_${startDate}_to_${endDate}`;
+      const clientSuffix = selectedPivotClient 
+        ? `_${clients.find(c => c.id === selectedPivotClient)?.name.replace(/[^a-z0-9]/gi, '_')}`
+        : '';
+      const filename = `pivot_${form?.title.replace(/[^a-z0-9]/gi, '_')}_${startDate}_to_${endDate}${clientSuffix}`;
       exportToCSV(pivotData, filename);
 
+      const clientInfo = selectedPivotClient 
+        ? ` for ${clients.find(c => c.id === selectedPivotClient)?.name}`
+        : '';
       toast({
         title: "Export Successful",
-        description: `Exported pivot table for "${form?.title}" from ${startDate} to ${endDate}.`,
+        description: `Exported pivot table for "${form?.title}" from ${startDate} to ${endDate}${clientInfo}.`,
       });
 
     } catch (error) {
@@ -579,10 +595,10 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                     <div>
                       <Label htmlFor="form-select">Select Form</Label>
                       <Select value={selectedForm} onValueChange={setSelectedForm}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-background">
                           <SelectValue placeholder="Select a form" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border shadow-lg z-50">
                           {forms.map((form) => (
                             <SelectItem key={form.id} value={form.id}>
                               <div className="flex items-center gap-2">
@@ -590,6 +606,30 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                                 <Badge variant={form.status === 'active' ? 'default' : 'secondary'} className="text-xs">
                                   {form.status}
                                 </Badge>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="client-select">Filter by Patient (Optional)</Label>
+                      <Select value={selectedPivotClient} onValueChange={setSelectedPivotClient}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue placeholder="All patients" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                          <SelectItem value="">All patients</SelectItem>
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              <div className="flex items-center gap-2">
+                                <span>{client.name}</span>
+                                {client.medical_record_number && (
+                                  <Badge variant="outline" className="text-xs">
+                                    MRN: {client.medical_record_number}
+                                  </Badge>
+                                )}
                               </div>
                             </SelectItem>
                           ))}

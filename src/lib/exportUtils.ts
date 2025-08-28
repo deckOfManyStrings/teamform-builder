@@ -145,8 +145,9 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
 
   // Create a row for each field
   allFields.forEach((fieldLabel, fieldId) => {
-    // Get all unique submitters for this field
+    // Get all unique submitters and clients for this field
     const submitters = new Set();
+    const clients = new Set();
     dateColumns.forEach(date => {
       const daySubmissions = submissionsByDate.get(date) || [];
       daySubmissions.forEach(submission => {
@@ -155,14 +156,17 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
           const submitterName = submission.users 
             ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim() || 'Unknown User'
             : 'Unknown User';
+          const clientName = submission.clients?.name || 'No Client';
           submitters.add(submitterName);
+          clients.add(clientName);
         }
       });
     });
 
     const row: any = { 
       'Field': fieldLabel,
-      'Submitted By': Array.from(submitters).join(', ')
+      'Submitted By': Array.from(submitters).join(', '),
+      'Client': Array.from(clients).join(', ')
     };
     
     dateColumns.forEach(date => {
