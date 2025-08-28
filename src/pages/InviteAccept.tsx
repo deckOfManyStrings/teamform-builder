@@ -124,12 +124,22 @@ export default function InviteAccept() {
       // Check if user already has a business
       const { data: existingUser } = await supabase
         .from('users')
-        .select('business_id')
+        .select('business_id, first_name, last_name')
         .eq('id', user.id)
         .single();
 
-      if (existingUser?.business_id) {
-        setError('You are already a member of an organization.');
+      if (existingUser?.business_id && existingUser.business_id !== inviteDetails.business_id) {
+        setError('You are already a member of another organization. Please contact your administrator to switch organizations.');
+        return;
+      }
+
+      // If user is already in the same business, just redirect to dashboard
+      if (existingUser?.business_id === inviteDetails.business_id) {
+        toast({
+          title: "Already a member",
+          description: `You're already a member of ${inviteDetails.business_name}`,
+        });
+        navigate('/dashboard');
         return;
       }
 
