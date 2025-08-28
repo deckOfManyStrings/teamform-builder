@@ -107,6 +107,70 @@ export const createSimplifiedFormExport = (submission: any, formSchema: any) => 
   return exportRow;
 };
 
+export const createPivotTableExport = (submissions: any[], startDate: string, endDate: string) => {
+  if (!submissions || submissions.length === 0) return [];
+
+  // Generate date range
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const dateColumns: string[] = [];
+  
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dateColumns.push(d.toISOString().split('T')[0]);
+  }
+
+  // Get all unique form fields across all submissions
+  const allFields = new Map();
+  submissions.forEach(submission => {
+    if (submission.forms?.fields_schema?.fields) {
+      submission.forms.fields_schema.fields.forEach((field: any) => {
+        const fieldLabel = field.label || field.id || 'Unknown Field';
+        allFields.set(field.id, fieldLabel);
+      });
+    }
+  });
+
+  // Create pivot table data
+  const pivotData: any[] = [];
+
+  // Group submissions by date
+  const submissionsByDate = new Map();
+  submissions.forEach(submission => {
+    const submissionDate = new Date(submission.created_at).toISOString().split('T')[0];
+    if (!submissionsByDate.has(submissionDate)) {
+      submissionsByDate.set(submissionDate, []);
+    }
+    submissionsByDate.get(submissionDate).push(submission);
+  });
+
+  // Create a row for each field
+  allFields.forEach((fieldLabel, fieldId) => {
+    const row: any = { 'Field': fieldLabel };
+    
+    dateColumns.forEach(date => {
+      const daySubmissions = submissionsByDate.get(date) || [];
+      const values: string[] = [];
+      
+      daySubmissions.forEach(submission => {
+        const value = submission.submission_data[fieldId];
+        if (value !== undefined && value !== null && value !== '') {
+          if (Array.isArray(value)) {
+            values.push(value.join(', '));
+          } else {
+            values.push(String(value));
+          }
+        }
+      });
+      
+      row[date] = values.length > 0 ? values.join(' | ') : '';
+    });
+    
+    pivotData.push(row);
+  });
+
+  return pivotData;
+};
+
 export const flattenClientData = (client: any) => {
   const flatClient = { ...client };
   
