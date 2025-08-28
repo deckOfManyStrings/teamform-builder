@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,12 +11,8 @@ import { z } from "zod";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  date_of_birth: z.string().optional(),
-  medical_record_number: z.string().optional(),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  notes: z.string().optional(),
+  date_of_birth: z.string().min(1, "Date of birth is required"),
+  medical_record_number: z.string().min(1, "UCID number is required"),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -53,10 +48,6 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
       name: client?.name || "",
       date_of_birth: client?.date_of_birth || "",
       medical_record_number: client?.medical_record_number || "",
-      email: client?.contact_info?.email || "",
-      phone: client?.contact_info?.phone || "",
-      address: client?.contact_info?.address || "",
-      notes: client?.notes || "",
     },
   });
 
@@ -65,19 +56,13 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
     
     setLoading(true);
     try {
-      const contactInfo = {
-        email: data.email || null,
-        phone: data.phone || null,
-        address: data.address || null,
-      };
-
       const clientData = {
         business_id: businessId,
         name: data.name,
         date_of_birth: data.date_of_birth || null,
         medical_record_number: data.medical_record_number || null,
-        contact_info: contactInfo,
-        notes: data.notes || null,
+        contact_info: null,
+        notes: null,
         created_by: user.id,
       };
 
@@ -133,7 +118,7 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
         </div>
 
         <div>
-          <Label htmlFor="date_of_birth">Date of Birth</Label>
+          <Label htmlFor="date_of_birth">Date of Birth *</Label>
           <Input
             id="date_of_birth"
             type="date"
@@ -145,64 +130,14 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
         </div>
 
         <div>
-          <Label htmlFor="medical_record_number">Medical Record Number</Label>
+          <Label htmlFor="medical_record_number">UCID Number *</Label>
           <Input
             id="medical_record_number"
             {...register("medical_record_number")}
-            placeholder="Enter MRN"
+            placeholder="Enter UCID number"
           />
           {errors.medical_record_number && (
             <p className="text-sm text-destructive mt-1">{errors.medical_record_number.message}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="client@example.com"
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="phone">Phone</Label>
-          <Input
-            id="phone"
-            {...register("phone")}
-            placeholder="(555) 123-4567"
-          />
-          {errors.phone && (
-            <p className="text-sm text-destructive mt-1">{errors.phone.message}</p>
-          )}
-        </div>
-
-        <div className="col-span-2">
-          <Label htmlFor="address">Address</Label>
-          <Input
-            id="address"
-            {...register("address")}
-            placeholder="123 Main St, City, State 12345"
-          />
-          {errors.address && (
-            <p className="text-sm text-destructive mt-1">{errors.address.message}</p>
-          )}
-        </div>
-
-        <div className="col-span-2">
-          <Label htmlFor="notes">Notes</Label>
-          <Textarea
-            id="notes"
-            {...register("notes")}
-            placeholder="Additional notes about the client..."
-            rows={3}
-          />
-          {errors.notes && (
-            <p className="text-sm text-destructive mt-1">{errors.notes.message}</p>
           )}
         </div>
       </div>
