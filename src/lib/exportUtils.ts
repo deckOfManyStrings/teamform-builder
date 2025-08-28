@@ -98,8 +98,8 @@ export const createSimplifiedFormExport = (submission: any, formSchema: any) => 
   // Add form fields with their labels and answers
   if (formSchema?.fields && submission.submission_data) {
     formSchema.fields.forEach((field: any) => {
-      const fieldLabel = field.label || field.name || 'Unknown Field';
-      const fieldValue = submission.submission_data[field.name] || '';
+      const fieldLabel = field.label || field.id || 'Unknown Field';
+      const fieldValue = submission.submission_data[field.id] || '';
       exportRow[fieldLabel] = fieldValue;
     });
   }
