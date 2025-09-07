@@ -198,7 +198,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
   };
 
   const fieldTypeOptions = [
-    { value: 'text', label: 'Domains' },
+    { value: 'text', label: 'Text Input' },
     { value: 'textarea', label: 'Text Area' },
     { value: 'email', label: 'Email' },
     { value: 'phone', label: 'Phone' },
@@ -376,7 +376,9 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                                 onChange={(e) => updateField(index, { 
                                   options: e.target.value.split('\n').filter(opt => opt.trim()) 
                                 })}
-                                placeholder="Option 1&#10;Option 2&#10;Option 3"
+                                placeholder="Option 1
+Option 2
+Option 3"
                                 rows={3}
                               />
                             </div>
