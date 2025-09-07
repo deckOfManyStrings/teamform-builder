@@ -26,6 +26,7 @@ interface FormField {
   id: string;
   type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'date' | 'email' | 'phone' | 'number';
   label: string;
+  description?: string;
   placeholder?: string;
   required: boolean;
   options?: string[];
@@ -197,7 +198,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
   };
 
   const fieldTypeOptions = [
-    { value: 'text', label: 'Text Input' },
+    { value: 'text', label: 'Domains' },
     { value: 'textarea', label: 'Text Area' },
     { value: 'email', label: 'Email' },
     { value: 'phone', label: 'Phone' },
@@ -335,6 +336,15 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                                 </SelectContent>
                               </Select>
                             </div>
+                          </div>
+
+                          <div>
+                            <Label>Description</Label>
+                            <Input
+                              value={field.description || ''}
+                              onChange={(e) => updateField(index, { description: e.target.value })}
+                              placeholder="Enter field description (optional)"
+                            />
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">

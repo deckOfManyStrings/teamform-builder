@@ -143,30 +143,18 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
     submissionsByDate.get(submissionDate).push(submission);
   });
 
+  // Helper function to get user initials
+  const getUserInitials = (user: any) => {
+    if (!user) return 'UU';
+    const firstName = user.first_name || '';
+    const lastName = user.last_name || '';
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || 'UU';
+  };
+
   // Create a row for each field
   allFields.forEach((fieldLabel, fieldId) => {
-    // Get all unique submitters and clients for this field
-    const submitters = new Set();
-    const clients = new Set();
-    dateColumns.forEach(date => {
-      const daySubmissions = submissionsByDate.get(date) || [];
-      daySubmissions.forEach(submission => {
-        const value = submission.submission_data[fieldId];
-        if (value !== undefined && value !== null && value !== '') {
-          const submitterName = submission.users 
-            ? `${submission.users.first_name || ''} ${submission.users.last_name || ''}`.trim() || 'Unknown User'
-            : 'Unknown User';
-          const clientName = submission.clients?.name || 'No Client';
-          submitters.add(submitterName);
-          clients.add(clientName);
-        }
-      });
-    });
-
     const row: any = { 
-      'Field': fieldLabel,
-      'Submitted By': Array.from(submitters).join(', '),
-      'Client': Array.from(clients).join(', ')
+      'Field': fieldLabel
     };
     
     dateColumns.forEach(date => {
@@ -176,11 +164,17 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
       daySubmissions.forEach(submission => {
         const value = submission.submission_data[fieldId];
         if (value !== undefined && value !== null && value !== '') {
+          const userInitials = getUserInitials(submission.users);
+          let formattedValue = '';
+          
           if (Array.isArray(value)) {
-            entries.push(value.join(', '));
+            formattedValue = value.join(', ');
           } else {
-            entries.push(String(value));
+            formattedValue = String(value);
           }
+          
+          // Add the answer with initials below it
+          entries.push(`${formattedValue}\n(${userInitials})`);
         }
       });
       

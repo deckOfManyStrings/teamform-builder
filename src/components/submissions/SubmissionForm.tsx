@@ -17,6 +17,7 @@ interface FormField {
   id: string;
   type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'date' | 'email' | 'phone' | 'number';
   label: string;
+  description?: string;
   placeholder?: string;
   required: boolean;
   options?: string[];
@@ -325,6 +326,9 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
                   {field.label}
                   {field.required && <span className="text-destructive">*</span>}
                 </Label>
+                {field.description && (
+                  <p className="text-sm text-muted-foreground">{field.description}</p>
+                )}
                 {renderField(field)}
               </div>
             ))}
