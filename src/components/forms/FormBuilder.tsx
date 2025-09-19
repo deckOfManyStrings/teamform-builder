@@ -307,11 +307,11 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                   <Card key={field.id}>
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
-                        <GripVertical className="h-4 w-4 text-muted-foreground mt-2" />
+                        <GripVertical className="h-4 w-4 text-muted-foreground mt-8" />
                         <div className="flex-1 space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1 mb-2">
                                 <Label>Domain Label *</Label>
                                 <TooltipProvider>
                                   <Tooltip>
@@ -331,7 +331,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                               />
                             </div>
                             <div>
-                              <Label>Domain Types</Label>
+                              <Label className="block mb-2">Domain Types</Label>
                               <Select
                                 value={field.type}
                                 onValueChange={(value) => updateField(index, { type: value as FormField['type'] })}
@@ -351,7 +351,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                           </div>
 
                           <div>
-                            <Label>Description</Label>
+                            <Label className="block mb-2">Description</Label>
                             <Input
                               value={field.description || ''}
                               onChange={(e) => updateField(index, { description: e.target.value })}
@@ -359,16 +359,16 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                             />
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <Label>Placeholder</Label>
+                              <Label className="block mb-2">Placeholder</Label>
                               <Input
                                 value={field.placeholder || ''}
                                 onChange={(e) => updateField(index, { placeholder: e.target.value })}
                                 placeholder="Enter placeholder text"
                               />
                             </div>
-                            <div className="flex items-center gap-2 pt-6">
+                            <div className="flex items-center gap-2 pt-8">
                               <input
                                 type="checkbox"
                                 id={`required-${index}`}
