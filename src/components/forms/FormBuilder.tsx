@@ -199,7 +199,6 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
   };
 
   const fieldTypeOptions = [
-    { value: 'text', label: 'Domain' },
     { value: 'textarea', label: 'Text Area' },
     { value: 'email', label: 'Email' },
     { value: 'phone', label: 'Phone' },
@@ -332,7 +331,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                               />
                             </div>
                             <div>
-                              <Label>Field Type</Label>
+                              <Label>Domain Types</Label>
                               <Select
                                 value={field.type}
                                 onValueChange={(value) => updateField(index, { type: value as FormField['type'] })}
