@@ -12,7 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2, GripVertical, FileText } from "lucide-react";
+import { Plus, Trash2, GripVertical, FileText, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -198,7 +199,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
   };
 
   const fieldTypeOptions = [
-    { value: 'text', label: 'Text Input' },
+    { value: 'text', label: 'Domain' },
     { value: 'textarea', label: 'Text Area' },
     { value: 'email', label: 'Email' },
     { value: 'phone', label: 'Phone' },
@@ -311,7 +312,19 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                         <div className="flex-1 space-y-4">
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <Label>Field Label *</Label>
+                              <div className="flex items-center gap-1">
+                                <Label>Field Label *</Label>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Info className="h-3 w-3 text-muted-foreground" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>This is a field label</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
                               <Input
                                 value={field.label}
                                 onChange={(e) => updateField(index, { label: e.target.value })}

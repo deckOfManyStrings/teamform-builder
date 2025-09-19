@@ -153,8 +153,21 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
 
   // Create a row for each field
   allFields.forEach((fieldLabel, fieldId) => {
+    // Find the field definition to get description
+    let fieldDescription = '';
+    submissions.forEach(submission => {
+      if (submission.forms?.fields_schema?.fields) {
+        const field = submission.forms.fields_schema.fields.find((f: any) => f.id === fieldId);
+        if (field?.description) {
+          fieldDescription = field.description;
+        }
+      }
+    });
+
+    const fieldDisplayName = fieldDescription ? `${fieldLabel}\n${fieldDescription}` : fieldLabel;
+    
     const row: any = { 
-      'Field': fieldLabel
+      'Field': fieldDisplayName
     };
     
     dateColumns.forEach(date => {
