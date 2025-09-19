@@ -313,14 +313,14 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <div className="flex items-center gap-1">
-                                <Label>Field Label *</Label>
+                                <Label>Domain Label *</Label>
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger>
                                       <Info className="h-3 w-3 text-muted-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                      <p>This is a field label</p>
+                                      <p>This is a label</p>
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
