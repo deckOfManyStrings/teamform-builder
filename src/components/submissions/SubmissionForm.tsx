@@ -10,8 +10,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Send } from "lucide-react";
+import { Save, Send, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface FormField {
   id: string;
@@ -53,6 +57,7 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
   const [form, setForm] = useState<Form | null>(null);
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [submissionDate, setSubmissionDate] = useState<Date>(new Date());
 
   useEffect(() => {
     fetchForm();
@@ -131,7 +136,7 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
       };
 
       if (status === 'submitted') {
-        updateData.submitted_at = new Date().toISOString();
+        updateData.submitted_at = submissionDate.toISOString();
       }
 
       const { error } = await supabase
@@ -309,6 +314,47 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
           <p className="text-muted-foreground">{form.description}</p>
         )}
       </div>
+
+      {/* Submission Date */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Submission Date</CardTitle>
+          <CardDescription>
+            Select the date this form should be recorded as submitted.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label>Date of Submission</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !submissionDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {submissionDate ? format(submissionDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={submissionDate}
+                  onSelect={(date) => date && setSubmissionDate(date)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  captionLayout="dropdown-buttons"
+                  fromYear={1900}
+                  toYear={2030}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Form Fields */}
       <Card>
