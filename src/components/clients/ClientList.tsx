@@ -236,9 +236,9 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-medium">{client.name}</h3>
                       {client.medical_record_number && (
-                        <Badge variant="outline">
-                          MRN: {client.medical_record_number}
-                        </Badge>
+                         <Badge variant="outline">
+                           UCI: {client.medical_record_number}
+                         </Badge>
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground space-y-1">
