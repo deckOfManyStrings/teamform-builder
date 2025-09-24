@@ -165,6 +165,10 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
                     toYear={new Date().getFullYear()}
                     initialFocus
                     className="p-3 pointer-events-auto"
+                    components={{
+                      IconLeft: () => null,
+                      IconRight: () => null,
+                    }}
                   />
                 </PopoverContent>
               </Popover>
