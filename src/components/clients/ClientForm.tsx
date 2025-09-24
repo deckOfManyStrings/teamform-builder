@@ -4,19 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  date_of_birth: z.date(),
+  birth_day: z.string().min(1, "Day is required"),
+  birth_month: z.string().min(1, "Month is required"),
+  birth_year: z.string().min(1, "Year is required"),
   medical_record_number: z.string().min(1, "UCI number is required"),
 });
 
@@ -52,7 +50,9 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
     resolver: zodResolver(clientSchema),
     defaultValues: {
       name: client?.name || "",
-      date_of_birth: client?.date_of_birth ? new Date(client.date_of_birth) : undefined,
+      birth_day: client?.date_of_birth ? new Date(client.date_of_birth).getDate().toString() : "",
+      birth_month: client?.date_of_birth ? (new Date(client.date_of_birth).getMonth() + 1).toString() : "",
+      birth_year: client?.date_of_birth ? new Date(client.date_of_birth).getFullYear().toString() : "",
       medical_record_number: client?.medical_record_number || "",
     },
   });
@@ -62,10 +62,13 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
     
     setLoading(true);
     try {
+      // Construct date from separate fields
+      const dateOfBirth = `${data.birth_year}-${data.birth_month.padStart(2, '0')}-${data.birth_day.padStart(2, '0')}`;
+      
       const clientData = {
         business_id: businessId,
         name: data.name,
-        date_of_birth: data.date_of_birth ? format(data.date_of_birth, 'yyyy-MM-dd') : null,
+        date_of_birth: dateOfBirth,
         medical_record_number: data.medical_record_number || null,
         contact_info: null,
         notes: null,
@@ -123,63 +126,86 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
           )}
         </div>
 
-        <div>
-          <Label htmlFor="date_of_birth">Date of Birth *</Label>
-          <Controller
-            name="date_of_birth"
-            control={control}
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? (
-                      format(field.value, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  className="w-auto p-0 max-w-[90vw] overflow-auto" 
-                  align="center" 
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    defaultMonth={field.value || new Date(2000, 0)}
-                    captionLayout="dropdown-buttons"
-                    fromYear={1900}
-                    toYear={new Date().getFullYear()}
-                    initialFocus
-                    className="p-1 pointer-events-auto text-sm"
-                    components={{
-                      IconLeft: () => null,
-                      IconRight: () => null,
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
-          />
-          {errors.date_of_birth && (
-            <p className="text-sm text-destructive mt-1">{errors.date_of_birth.message}</p>
+        <div className="col-span-2">
+          <Label>Date of Birth *</Label>
+          <div className="grid grid-cols-3 gap-2">
+            <div>
+              <Controller
+                name="birth_month"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Month" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border shadow-lg z-50">
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const month = i + 1;
+                        const monthName = new Date(2000, i, 1).toLocaleDateString('en-US', { month: 'long' });
+                        return (
+                          <SelectItem key={month} value={month.toString()}>
+                            {monthName}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div>
+              <Controller
+                name="birth_day"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Day" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border shadow-lg z-50">
+                      {Array.from({ length: 31 }, (_, i) => {
+                        const day = i + 1;
+                        return (
+                          <SelectItem key={day} value={day.toString()}>
+                            {day}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div>
+              <Controller
+                name="birth_year"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Year" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border shadow-lg z-50 max-h-60">
+                      {Array.from({ length: 100 }, (_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          </div>
+          {(errors.birth_day || errors.birth_month || errors.birth_year) && (
+            <p className="text-sm text-destructive mt-1">Please select a complete date of birth</p>
           )}
         </div>
 
-        <div>
+        <div className="col-span-2">
           <Label htmlFor="medical_record_number">UCI Number *</Label>
           <Input
             id="medical_record_number"
