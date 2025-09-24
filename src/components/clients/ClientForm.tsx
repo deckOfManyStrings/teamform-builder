@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
   date_of_birth: z.date(),
-  medical_record_number: z.string().min(1, "UCID number is required"),
+  medical_record_number: z.string().min(1, "UCI number is required"),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -154,6 +154,10 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")
                     }
+                    defaultMonth={field.value || new Date(2000, 0)}
+                    captionLayout="dropdown-buttons"
+                    fromYear={1900}
+                    toYear={new Date().getFullYear()}
                     initialFocus
                     className="p-3 pointer-events-auto"
                   />
@@ -167,11 +171,11 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
         </div>
 
         <div>
-          <Label htmlFor="medical_record_number">UCID Number *</Label>
+          <Label htmlFor="medical_record_number">UCI Number *</Label>
           <Input
             id="medical_record_number"
             {...register("medical_record_number")}
-            placeholder="Enter UCID number"
+            placeholder="Enter UCI number"
           />
           {errors.medical_record_number && (
             <p className="text-sm text-destructive mt-1">{errors.medical_record_number.message}</p>
