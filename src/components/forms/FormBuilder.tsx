@@ -386,7 +386,7 @@ export default function FormBuilder({ businessId, templates, form, onSaved, onCa
                               <Textarea
                                 value={field.options?.join('\n') || ''}
                                 onChange={(e) => updateField(index, { 
-                                  options: e.target.value.split('\n').filter(opt => opt.trim()) 
+                                  options: e.target.value.split('\n') 
                                 })}
                                 placeholder="Option 1
 Option 2
