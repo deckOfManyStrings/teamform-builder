@@ -164,9 +164,9 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
       }
     });
 
-    // Keep field name concise - use description as tooltip-style info if needed
-    const fieldDisplayName = fieldDescription && fieldDescription.length < 30 
-      ? `${fieldLabel} (${fieldDescription})` 
+    // Use description as additional context if available
+    const fieldDisplayName = fieldDescription 
+      ? `${fieldLabel} - ${fieldDescription}` 
       : fieldLabel;
     
     const row: any = { 
@@ -189,18 +189,13 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
             formattedValue = String(value);
           }
           
-          // Keep entries concise - put initials inline with value
-          // Truncate very long values to prevent cell overflow
-          const truncatedValue = formattedValue.length > 50 
-            ? formattedValue.substring(0, 47) + '...' 
-            : formattedValue;
-          
-          entries.push(`${truncatedValue} (${userInitials})`);
+          // Keep full value and put initials inline - let cells expand naturally
+          entries.push(`${formattedValue} (${userInitials})`);
         }
       });
       
-      // Use semicolon instead of pipe for better cell formatting
-      row[date] = entries.length > 0 ? entries.join('; ') : '';
+      // Use newline separator for better readability when cells expand
+      row[date] = entries.length > 0 ? entries.join('\n') : '';
     });
     
     pivotData.push(row);
