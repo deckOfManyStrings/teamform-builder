@@ -5,13 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
+  date_of_birth: z.date(),
   medical_record_number: z.string().min(1, "UCID number is required"),
 });
 
@@ -41,13 +46,13 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
       name: client?.name || "",
-      date_of_birth: client?.date_of_birth ? 
-        new Date(client.date_of_birth).toISOString().split('T')[0] : "",
+      date_of_birth: client?.date_of_birth ? new Date(client.date_of_birth) : undefined,
       medical_record_number: client?.medical_record_number || "",
     },
   });
@@ -60,7 +65,7 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
       const clientData = {
         business_id: businessId,
         name: data.name,
-        date_of_birth: data.date_of_birth || null,
+        date_of_birth: data.date_of_birth ? format(data.date_of_birth, 'yyyy-MM-dd') : null,
         medical_record_number: data.medical_record_number || null,
         contact_info: null,
         notes: null,
@@ -120,10 +125,41 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
 
         <div>
           <Label htmlFor="date_of_birth">Date of Birth *</Label>
-          <Input
-            id="date_of_birth"
-            type="date"
-            {...register("date_of_birth")}
+          <Controller
+            name="date_of_birth"
+            control={control}
+            render={({ field }) => (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {field.value ? (
+                      format(field.value, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
           />
           {errors.date_of_birth && (
             <p className="text-sm text-destructive mt-1">{errors.date_of_birth.message}</p>
