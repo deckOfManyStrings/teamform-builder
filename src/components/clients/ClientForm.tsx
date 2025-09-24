@@ -46,7 +46,8 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
     resolver: zodResolver(clientSchema),
     defaultValues: {
       name: client?.name || "",
-      date_of_birth: client?.date_of_birth || "",
+      date_of_birth: client?.date_of_birth ? 
+        new Date(client.date_of_birth).toISOString().split('T')[0] : "",
       medical_record_number: client?.medical_record_number || "",
     },
   });
