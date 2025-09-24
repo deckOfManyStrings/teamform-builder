@@ -146,7 +146,12 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent 
+                  className="w-auto p-0 max-w-[95vw] overflow-auto" 
+                  align="center" 
+                  side="bottom"
+                  sideOffset={4}
+                >
                   <Calendar
                     mode="single"
                     selected={field.value}
