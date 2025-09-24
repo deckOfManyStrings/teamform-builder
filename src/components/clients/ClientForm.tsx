@@ -147,7 +147,7 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent 
-                  className="w-auto p-0 max-w-[95vw] overflow-auto" 
+                  className="w-auto p-0 max-w-[90vw] overflow-auto" 
                   align="center" 
                   side="bottom"
                   sideOffset={4}
@@ -164,7 +164,7 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
                     fromYear={1900}
                     toYear={new Date().getFullYear()}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-1 pointer-events-auto text-sm"
                     components={{
                       IconLeft: () => null,
                       IconRight: () => null,
