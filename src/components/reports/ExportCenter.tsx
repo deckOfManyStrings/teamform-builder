@@ -402,7 +402,10 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      {Object.keys(previewData[0]).map((key) => (
+                      <TableHead className="sticky left-0 bg-background z-10 whitespace-nowrap font-semibold border-r">
+                        Field
+                      </TableHead>
+                      {Object.keys(previewData[0]).filter(key => key !== 'Field').map((key) => (
                         <TableHead key={key} className="whitespace-nowrap font-semibold">
                           {key}
                         </TableHead>
@@ -412,7 +415,10 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                   <TableBody>
                     {previewData.map((row, index) => (
                       <TableRow key={index}>
-                        {Object.keys(previewData[0]).map((key) => (
+                        <TableCell className="sticky left-0 bg-background z-10 whitespace-pre-wrap align-top max-w-md border-r font-medium">
+                          {row['Field']}
+                        </TableCell>
+                        {Object.keys(previewData[0]).filter(key => key !== 'Field').map((key) => (
                           <TableCell key={key} className="whitespace-pre-wrap align-top max-w-md">
                             {row[key]}
                           </TableCell>
