@@ -110,16 +110,9 @@ export const createSimplifiedFormExport = (submission: any, formSchema: any) => 
 export const createPivotTableExport = (submissions: any[], startDate: string, endDate: string) => {
   if (!submissions || submissions.length === 0) return [];
 
-  // Get client name from first submission
-  const clientName = submissions[0]?.clients?.name || 'All Clients';
-  
-  // Extract month and year from start date
+  // Generate date range with day numbers
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const monthName = start.toLocaleString('default', { month: 'long' });
-  const year = start.getFullYear();
-  
-  // Generate date range with day numbers
   const dateColumns: string[] = [];
   const dayNumbers: string[] = [];
   
@@ -139,30 +132,8 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
     }
   });
 
-  // Create pivot table data with metadata rows
+  // Create pivot table data
   const pivotData: any[] = [];
-  
-  // Add metadata rows at the top
-  const clientRow: any = { 'Field': 'Client' };
-  const monthRow: any = { 'Field': 'Month' };
-  const yearRow: any = { 'Field': 'Year' };
-  
-  dayNumbers.forEach((day, index) => {
-    clientRow[day] = index === 0 ? clientName : '';
-    monthRow[day] = index === 0 ? monthName : '';
-    yearRow[day] = index === 0 ? String(year) : '';
-  });
-  
-  pivotData.push(clientRow);
-  pivotData.push(monthRow);
-  pivotData.push(yearRow);
-  
-  // Add an empty row separator
-  const separatorRow: any = { 'Field': '' };
-  dayNumbers.forEach(day => {
-    separatorRow[day] = '';
-  });
-  pivotData.push(separatorRow);
 
   // Group submissions by date
   const submissionsByDate = new Map();

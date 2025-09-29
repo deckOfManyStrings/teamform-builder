@@ -377,9 +377,25 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
           <DialogHeader>
             <DialogTitle>Pivot Table Preview</DialogTitle>
             <DialogDescription>
-              Preview of the pivot table for {forms.find(f => f.id === selectedForm)?.title} ({startDate} to {endDate})
+              Preview of the pivot table for {forms.find(f => f.id === selectedForm)?.title}
             </DialogDescription>
           </DialogHeader>
+          <div className="space-y-1 text-sm mb-4">
+            <div className="flex gap-4">
+              <span className="font-semibold">Client:</span>
+              <span>{selectedPivotClient && selectedPivotClient !== "all" 
+                ? clients.find(c => c.id === selectedPivotClient)?.name 
+                : 'All Clients'}</span>
+            </div>
+            <div className="flex gap-4">
+              <span className="font-semibold">Month:</span>
+              <span>{new Date(startDate).toLocaleString('default', { month: 'long' })}</span>
+            </div>
+            <div className="flex gap-4">
+              <span className="font-semibold">Year:</span>
+              <span>{new Date(startDate).getFullYear()}</span>
+            </div>
+          </div>
           <ScrollArea className="flex-1 w-full">
             <div className="min-w-max">
               {previewData.length > 0 && (
