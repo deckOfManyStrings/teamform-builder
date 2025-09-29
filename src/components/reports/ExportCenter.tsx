@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { Download, Calendar, Eye } from "lucide-react";
 import { exportToCSV, createPivotTableExport } from "@/lib/exportUtils";
@@ -373,38 +373,41 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
 
       {/* Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-[90vw] max-h-[85vh]">
+        <DialogContent className="max-w-[90vw] max-h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Pivot Table Preview</DialogTitle>
             <DialogDescription>
               Preview of the pivot table for {forms.find(f => f.id === selectedForm)?.title} ({startDate} to {endDate})
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea className="h-[calc(85vh-150px)] w-full">
-            {previewData.length > 0 && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {Object.keys(previewData[0]).map((key) => (
-                      <TableHead key={key} className="whitespace-nowrap font-semibold">
-                        {key}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {previewData.map((row, index) => (
-                    <TableRow key={index}>
+          <ScrollArea className="flex-1 w-full">
+            <div className="min-w-max">
+              {previewData.length > 0 && (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
                       {Object.keys(previewData[0]).map((key) => (
-                        <TableCell key={key} className="whitespace-pre-wrap align-top">
-                          {row[key]}
-                        </TableCell>
+                        <TableHead key={key} className="whitespace-nowrap font-semibold">
+                          {key}
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+                  </TableHeader>
+                  <TableBody>
+                    {previewData.map((row, index) => (
+                      <TableRow key={index}>
+                        {Object.keys(previewData[0]).map((key) => (
+                          <TableCell key={key} className="whitespace-pre-wrap align-top max-w-md">
+                            {row[key]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </DialogContent>
       </Dialog>
