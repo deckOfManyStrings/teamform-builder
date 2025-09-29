@@ -7,8 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, Eye } from "lucide-react";
 import { exportToCSV, createPivotTableExport } from "@/lib/exportUtils";
 
 interface Form {
@@ -38,6 +41,8 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
   const [selectedForm, setSelectedForm] = useState<string>("");
   const [selectedPivotClient, setSelectedPivotClient] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any[]>([]);
   const [startDate, setStartDate] = useState(() => {
     const date = new Date();
     date.setDate(date.getDate() - 7);
@@ -76,6 +81,84 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
 
     } catch (error) {
       console.error('Error fetching forms and clients:', error);
+    }
+  };
+
+  // Preview pivot table
+  const previewPivotTable = async () => {
+    if (!selectedForm) {
+      toast({
+        title: "No Form Selected",
+        description: "Please select a form to preview.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const form = forms.find(f => f.id === selectedForm);
+
+      // Get form with schema
+      const { data: formWithSchema, error: formError } = await supabase
+        .from('forms')
+        .select('id, title, fields_schema')
+        .eq('id', selectedForm)
+        .single();
+
+      if (formError) throw formError;
+
+      let query = supabase
+        .from('form_submissions')
+        .select(`
+          *,
+          clients(name),
+          users!form_submissions_submitted_by_fkey(first_name, last_name, email)
+        `)
+        .eq('form_id', selectedForm)
+        .gte('created_at', `${startDate}T00:00:00.000Z`)
+        .lte('created_at', `${endDate}T23:59:59.999Z`);
+
+      // Add client filter if selected
+      if (selectedPivotClient && selectedPivotClient !== "all") {
+        query = query.eq('client_id', selectedPivotClient);
+      }
+
+      const { data: submissions, error } = await query.order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (!submissions || submissions.length === 0) {
+        const clientFilter = selectedPivotClient && selectedPivotClient !== "all"
+          ? ` for the selected client`
+          : '';
+        toast({
+          title: "No Data",
+          description: `No submissions found for "${form?.title}" in the selected date range${clientFilter}.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Add form schema to submissions
+      const submissionsWithSchema = submissions.map(submission => ({
+        ...submission,
+        forms: formWithSchema
+      }));
+
+      const pivotData = createPivotTableExport(submissionsWithSchema, startDate, endDate);
+      setPreviewData(pivotData);
+      setPreviewOpen(true);
+
+    } catch (error) {
+      console.error('Error previewing pivot table:', error);
+      toast({
+        title: "Preview Failed",
+        description: "Failed to generate preview. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -262,20 +345,69 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                     </div>
                   </div>
 
-                  <Button 
-                    onClick={exportPivotTable} 
-                    disabled={loading || !selectedForm || !startDate || !endDate}
-                    className="w-full"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Pivot Table
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={previewPivotTable} 
+                      disabled={loading || !selectedForm || !startDate || !endDate}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Preview
+                    </Button>
+                    <Button 
+                      onClick={exportPivotTable} 
+                      disabled={loading || !selectedForm || !startDate || !endDate}
+                      className="flex-1"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
         </CardContent>
       </Card>
+
+      {/* Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-[90vw] max-h-[85vh]">
+          <DialogHeader>
+            <DialogTitle>Pivot Table Preview</DialogTitle>
+            <DialogDescription>
+              Preview of the pivot table for {forms.find(f => f.id === selectedForm)?.title} ({startDate} to {endDate})
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[calc(85vh-150px)] w-full">
+            {previewData.length > 0 && (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {Object.keys(previewData[0]).map((key) => (
+                      <TableHead key={key} className="whitespace-nowrap font-semibold">
+                        {key}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {previewData.map((row, index) => (
+                    <TableRow key={index}>
+                      {Object.keys(previewData[0]).map((key) => (
+                        <TableCell key={key} className="whitespace-pre-wrap align-top">
+                          {row[key]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
