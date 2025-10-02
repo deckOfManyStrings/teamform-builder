@@ -187,10 +187,15 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
       'Field': fieldDisplayName
     };
     
+    const submittedByRow: any = {
+      'Field': '  Submitted By'
+    };
+    
     dateColumns.forEach((date, index) => {
       const formattedDate = formattedDates[index];
       const daySubmissions = submissionsByDate.get(date) || [];
       const entries: string[] = [];
+      const submitters: string[] = [];
       
       daySubmissions.forEach(submission => {
         const value = submission.submission_data[fieldId];
@@ -205,20 +210,24 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
             formattedValue = String(value);
           }
           
+          entries.push(formattedValue);
+          
           // Include client name if exporting multiple clients
           const identifier = hasMultipleClients 
             ? `${userInitials} - ${clientName}`
             : userInitials;
           
-          entries.push(`${formattedValue} (${identifier})`);
+          submitters.push(identifier);
         }
       });
       
       // Use newline separator for better readability when cells expand
       row[formattedDate] = entries.length > 0 ? entries.join('\n') : '';
+      submittedByRow[formattedDate] = submitters.length > 0 ? submitters.join('\n') : '';
     });
     
     pivotData.push(row);
+    pivotData.push(submittedByRow);
   });
 
   return pivotData;
