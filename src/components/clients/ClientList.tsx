@@ -16,7 +16,6 @@ interface Client {
   id: string;
   name: string;
   date_of_birth: string | null;
-  contact_info: any;
   medical_record_number: string | null;
   notes: string | null;
   is_active: boolean;
@@ -50,8 +49,7 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
     // Filter clients based on search term
     const filtered = clients.filter(client =>
       client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (client.medical_record_number && client.medical_record_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (client.contact_info?.email && client.contact_info.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      (client.medical_record_number && client.medical_record_number.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredClients(filtered);
   }, [clients, searchTerm]);
@@ -114,14 +112,6 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Not provided';
     return new Date(dateString).toLocaleDateString();
-  };
-
-  const getContactDisplay = (contactInfo: any) => {
-    if (!contactInfo) return 'No contact info';
-    const parts = [];
-    if (contactInfo.email) parts.push(contactInfo.email);
-    if (contactInfo.phone) parts.push(contactInfo.phone);
-    return parts.length > 0 ? parts.join(' • ') : 'No contact info';
   };
 
   if (loading) {
@@ -212,7 +202,7 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search clients by name, MRN, or email..."
+                placeholder="Search clients by name or UCI..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -241,9 +231,8 @@ export default function ClientList({ businessId, userRole }: ClientListProps) {
                          </Badge>
                       )}
                     </div>
-                    <div className="text-sm text-muted-foreground space-y-1">
+                    <div className="text-sm text-muted-foreground">
                       <p>DOB: {formatDate(client.date_of_birth)}</p>
-                      <p>{getContactDisplay(client.contact_info)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

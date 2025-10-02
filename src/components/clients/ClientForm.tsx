@@ -24,7 +24,6 @@ interface Client {
   id: string;
   name: string;
   date_of_birth: string | null;
-  contact_info: any;
   medical_record_number: string | null;
   notes: string | null;
 }
@@ -70,7 +69,6 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
         name: data.name,
         date_of_birth: dateOfBirth,
         medical_record_number: data.medical_record_number || null,
-        contact_info: null,
         notes: null,
         created_by: user.id,
       };

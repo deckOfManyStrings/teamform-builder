@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Edit, User, Calendar, Phone, Mail, MapPin, FileText } from "lucide-react";
+import { Edit, User, Calendar, FileText } from "lucide-react";
 
 interface Client {
   id: string;
   name: string;
   date_of_birth: string | null;
-  contact_info: any;
   medical_record_number: string | null;
   notes: string | null;
   created_at: string;
@@ -59,44 +58,12 @@ export default function ClientDetail({ client, onEdit, onClose }: ClientDetailPr
       <div className="space-y-4">
         <h3 className="font-medium text-lg">Basic Information</h3>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-sm text-muted-foreground">Date of Birth</p>
-              <p className="font-medium">{formatDate(client.date_of_birth)}</p>
-            </div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <div>
+            <p className="text-sm text-muted-foreground">Date of Birth</p>
+            <p className="font-medium">{formatDate(client.date_of_birth)}</p>
           </div>
-
-          {client.contact_info?.email && (
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{client.contact_info.email}</p>
-              </div>
-            </div>
-          )}
-
-          {client.contact_info?.phone && (
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Phone</p>
-                <p className="font-medium">{client.contact_info.phone}</p>
-              </div>
-            </div>
-          )}
-
-          {client.contact_info?.address && (
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Address</p>
-                <p className="font-medium">{client.contact_info.address}</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

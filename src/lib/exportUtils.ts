@@ -227,17 +227,6 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
 export const flattenClientData = (client: any) => {
   const flatClient = { ...client };
   
-  // Flatten contact_info if it's an object
-  if (flatClient.contact_info && typeof flatClient.contact_info === 'object') {
-    const contactInfo = flatClient.contact_info;
-    delete flatClient.contact_info;
-    
-    // Add each field from contact_info as a separate column
-    Object.keys(contactInfo).forEach(key => {
-      flatClient[`contact_${key}`] = contactInfo[key];
-    });
-  }
-  
   // Format dates
   flatClient.created_at = formatDateForExport(flatClient.created_at);
   flatClient.updated_at = formatDateForExport(flatClient.updated_at);
