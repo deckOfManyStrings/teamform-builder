@@ -155,6 +155,16 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || 'UU';
   };
 
+  // Helper function to get client name
+  const getClientName = (client: any) => {
+    if (!client) return 'Unknown';
+    return client.name || 'Unknown';
+  };
+
+  // Check if we have multiple clients
+  const uniqueClients = new Set(submissions.map(s => s.client_id).filter(Boolean));
+  const hasMultipleClients = uniqueClients.size > 1;
+
   // Create a row for each field
   allFields.forEach((fieldLabel, fieldId) => {
     // Find the field definition to get description
@@ -186,6 +196,7 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
         const value = submission.submission_data[fieldId];
         if (value !== undefined && value !== null && value !== '') {
           const userInitials = getUserInitials(submission.users);
+          const clientName = getClientName(submission.clients);
           let formattedValue = '';
           
           if (Array.isArray(value)) {
@@ -194,8 +205,12 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
             formattedValue = String(value);
           }
           
-          // Keep full value and put initials inline - let cells expand naturally
-          entries.push(`${formattedValue} (${userInitials})`);
+          // Include client name if exporting multiple clients
+          const identifier = hasMultipleClients 
+            ? `${userInitials} - ${clientName}`
+            : userInitials;
+          
+          entries.push(`${formattedValue} (${identifier})`);
         }
       });
       
