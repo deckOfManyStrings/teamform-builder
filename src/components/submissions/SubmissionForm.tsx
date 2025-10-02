@@ -10,12 +10,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Send, CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { Save, Send } from "lucide-react";
 
 interface FormField {
   id: string;
@@ -57,7 +53,10 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
   const [form, setForm] = useState<Form | null>(null);
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [submissionDate, setSubmissionDate] = useState<Date>(new Date());
+  const today = new Date();
+  const [submissionMonth, setSubmissionMonth] = useState<string>((today.getMonth() + 1).toString());
+  const [submissionDay, setSubmissionDay] = useState<string>(today.getDate().toString());
+  const [submissionYear, setSubmissionYear] = useState<string>(today.getFullYear().toString());
 
   useEffect(() => {
     fetchForm();
@@ -136,7 +135,8 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
       };
 
       if (status === 'submitted') {
-        updateData.submitted_at = submissionDate.toISOString();
+        const submissionDate = `${submissionYear}-${submissionMonth.padStart(2, '0')}-${submissionDay.padStart(2, '0')}`;
+        updateData.submitted_at = new Date(submissionDate).toISOString();
       }
 
       const { error } = await supabase
@@ -326,32 +326,60 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
         <CardContent>
           <div className="space-y-2">
             <Label>Date of Submission</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !submissionDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {submissionDate ? format(submissionDate, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={submissionDate}
-                  onSelect={(date) => date && setSubmissionDate(date)}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                  captionLayout="dropdown-buttons"
-                  fromYear={1900}
-                  toYear={2030}
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <Select value={submissionMonth} onValueChange={setSubmissionMonth}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Month" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border border-border shadow-lg z-50">
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const month = i + 1;
+                      const monthName = new Date(2000, i, 1).toLocaleDateString('en-US', { month: 'long' });
+                      return (
+                        <SelectItem key={month} value={month.toString()}>
+                          {monthName}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select value={submissionDay} onValueChange={setSubmissionDay}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Day" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border border-border shadow-lg z-50">
+                    {Array.from({ length: 31 }, (_, i) => {
+                      const day = i + 1;
+                      return (
+                        <SelectItem key={day} value={day.toString()}>
+                          {day}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select value={submissionYear} onValueChange={setSubmissionYear}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Year" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border border-border shadow-lg z-50 max-h-60">
+                    {Array.from({ length: 10 }, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
