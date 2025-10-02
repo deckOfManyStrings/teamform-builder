@@ -180,7 +180,7 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
 
     // Use description as additional context if available
     const fieldDisplayName = fieldDescription 
-      ? `${fieldLabel} - ${fieldDescription}` 
+      ? `${fieldLabel}\n${fieldDescription}` 
       : fieldLabel;
     
     const row: any = { 
