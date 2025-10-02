@@ -368,7 +368,7 @@ export default function SubmissionForm({ submission, onSaved, onCancel }: Submis
                     <SelectValue placeholder="Year" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border shadow-lg z-50 max-h-60">
-                    {Array.from({ length: 10 }, (_, i) => {
+                    {Array.from({ length: 50 }, (_, i) => {
                       const year = new Date().getFullYear() - i;
                       return (
                         <SelectItem key={year} value={year.toString()}>
