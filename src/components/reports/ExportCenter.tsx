@@ -388,12 +388,8 @@ export default function ExportCenter({ businessId, userRole, timeRange }: Export
                 : 'All Clients'}</span>
             </div>
             <div className="flex gap-4">
-              <span className="font-semibold">Month:</span>
-              <span>{new Date(startDate).toLocaleString('default', { month: 'long' })}</span>
-            </div>
-            <div className="flex gap-4">
-              <span className="font-semibold">Year:</span>
-              <span>{new Date(startDate).getFullYear()}</span>
+              <span className="font-semibold">Date Range:</span>
+              <span>{new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</span>
             </div>
           </div>
           <ScrollArea className="flex-1 w-full">

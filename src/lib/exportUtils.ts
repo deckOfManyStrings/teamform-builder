@@ -110,15 +110,17 @@ export const createSimplifiedFormExport = (submission: any, formSchema: any) => 
 export const createPivotTableExport = (submissions: any[], startDate: string, endDate: string) => {
   if (!submissions || submissions.length === 0) return [];
 
-  // Generate date range with day numbers
+  // Generate date range in chronological order with formatted dates
   const start = new Date(startDate);
   const end = new Date(endDate);
   const dateColumns: string[] = [];
-  const dayNumbers: string[] = [];
+  const formattedDates: string[] = [];
   
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dateColumns.push(d.toISOString().split('T')[0]);
-    dayNumbers.push(String(d.getDate()));
+    const isoDate = d.toISOString().split('T')[0];
+    dateColumns.push(isoDate);
+    // Format as "M/D" (e.g., "1/15", "12/3")
+    formattedDates.push(`${d.getMonth() + 1}/${d.getDate()}`);
   }
 
   // Get all unique form fields across all submissions
@@ -176,7 +178,7 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
     };
     
     dateColumns.forEach((date, index) => {
-      const day = dayNumbers[index];
+      const formattedDate = formattedDates[index];
       const daySubmissions = submissionsByDate.get(date) || [];
       const entries: string[] = [];
       
@@ -198,7 +200,7 @@ export const createPivotTableExport = (submissions: any[], startDate: string, en
       });
       
       // Use newline separator for better readability when cells expand
-      row[day] = entries.length > 0 ? entries.join('\n') : '';
+      row[formattedDate] = entries.length > 0 ? entries.join('\n') : '';
     });
     
     pivotData.push(row);
