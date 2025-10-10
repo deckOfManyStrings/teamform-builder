@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lovable.62e552a1508746328c350c3843f1b90a',
-  appName: 'teamform-builder',
+  appName: 'trakilfy',
   webDir: 'dist',
   server: {
     url: 'https://62e552a1-5087-4632-8c35-0c3843f1b90a.lovableproject.com?forceHideBadge=true',

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
-import { Building, FileText, Users, Shield, TrendingUp, Clock, AlertTriangle, CheckCircle, ArrowRight, Star } from "lucide-react";
+import { Building, FileText, Users, Shield, TrendingUp, Clock, AlertTriangle, CheckCircle, ArrowRight, Star, UserPlus, FormInput, Send, BarChart } from "lucide-react";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -33,7 +33,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Building className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">TeamForm</h1>
+            <h1 className="text-2xl font-bold">Trakilfy</h1>
           </div>
           <Button onClick={() => navigate('/auth')} size="sm">
             Get Started
@@ -50,19 +50,16 @@ const Index = () => {
               HIPAA Compliant Healthcare Forms Platform
             </div>
             <h1 className="text-6xl font-bold tracking-tight mb-6">
-              Healthcare Forms
+              Data Collection
               <span className="text-primary block">Reimagined</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Stop wasting time with paper forms and complex systems. TeamForm makes healthcare data collection effortless, secure, and collaborative.
+              Stop wasting time with paper forms and complex systems. Trakilfy makes data collection effortless, secure, and collaborative.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-8 py-6">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-                Watch Demo
               </Button>
             </div>
           </div>
@@ -119,9 +116,9 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold mb-6">Meet TeamForm</h2>
+              <h2 className="text-5xl font-bold mb-6">Meet Trakilfy</h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                The all-in-one healthcare forms platform that saves time, reduces errors, and improves patient care
+                The all-in-one forms platform that saves time, reduces errors, and improves data collection
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -132,7 +129,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">Smart Form Builder</h3>
-                    <p className="text-muted-foreground">Create custom healthcare forms in minutes with our intuitive drag-and-drop interface</p>
+                    <p className="text-muted-foreground">Create custom forms in minutes with our intuitive drag-and-drop interface</p>
                   </div>
                 </div>
                 
@@ -142,7 +139,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">Team Collaboration</h3>
-                    <p className="text-muted-foreground">Real-time collaboration with role-based permissions for your entire medical team</p>
+                    <p className="text-muted-foreground">Real-time collaboration with role-based permissions for your entire team</p>
                   </div>
                 </div>
                 
@@ -151,8 +148,8 @@ const Index = () => {
                     <Shield className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">HIPAA Compliance</h3>
-                    <p className="text-muted-foreground">Built-in security features ensure patient data protection and regulatory compliance</p>
+                    <h3 className="text-xl font-semibold mb-2">Secure & Compliant</h3>
+                    <p className="text-muted-foreground">Built-in security features ensure data protection and regulatory compliance</p>
                   </div>
                 </div>
               </div>
@@ -167,28 +164,59 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Slide 4: Market Opportunity */}
+      {/* Slide 4: How It Works */}
       <section className="min-h-screen flex items-center justify-center py-20 bg-muted/20">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-5xl font-bold mb-12">Massive Market Opportunity</h2>
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              <Card className="p-8">
-                <div className="text-4xl font-bold text-primary mb-4">$50B</div>
-                <h3 className="text-xl font-semibold mb-2">Healthcare IT Market</h3>
-                <p className="text-muted-foreground">Growing at 15% annually with increasing digitization needs</p>
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold mb-6">How Trakilfy Works</h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Simple workflow from setup to insights in four easy steps
+              </p>
+            </div>
+            <div className="grid md:grid-cols-4 gap-8">
+              <Card className="p-8 text-center relative">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <UserPlus className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-4xl font-bold text-primary mb-2">1</div>
+                <h3 className="text-xl font-semibold mb-4">Add Clients</h3>
+                <p className="text-muted-foreground">
+                  Create client profiles to organize your data collection by person, project, or group
+                </p>
               </Card>
               
-              <Card className="p-8">
-                <div className="text-4xl font-bold text-primary mb-4">250K+</div>
-                <h3 className="text-xl font-semibold mb-2">Medical Practices</h3>
-                <p className="text-muted-foreground">In the US alone still using outdated form systems</p>
+              <Card className="p-8 text-center relative">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <FormInput className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-4xl font-bold text-primary mb-2">2</div>
+                <h3 className="text-xl font-semibold mb-4">Build Forms</h3>
+                <p className="text-muted-foreground">
+                  Design custom forms with various field types to capture exactly the data you need
+                </p>
               </Card>
               
-              <Card className="p-8">
-                <div className="text-4xl font-bold text-primary mb-4">$2.3K</div>
-                <h3 className="text-xl font-semibold mb-2">Average Monthly Savings</h3>
-                <p className="text-muted-foreground">Per practice using digital form solutions</p>
+              <Card className="p-8 text-center relative">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <Send className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-4xl font-bold text-primary mb-2">3</div>
+                <h3 className="text-xl font-semibold mb-4">Collect Data</h3>
+                <p className="text-muted-foreground">
+                  Team members submit form data for clients, with all submissions automatically tracked
+                </p>
+              </Card>
+              
+              <Card className="p-8 text-center relative">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <BarChart className="h-8 w-8 text-primary" />
+                </div>
+                <div className="text-4xl font-bold text-primary mb-2">4</div>
+                <h3 className="text-xl font-semibold mb-4">Analyze & Export</h3>
+                <p className="text-muted-foreground">
+                  View dashboards, audit trails, and export data in multiple formats for analysis
+                </p>
               </Card>
             </div>
           </div>
@@ -202,7 +230,7 @@ const Index = () => {
             <div className="text-center mb-16">
               <h2 className="text-5xl font-bold mb-6">Proven Results</h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Healthcare providers trust TeamForm to streamline their operations
+                Teams trust Trakilfy to streamline their operations
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-12">
@@ -227,15 +255,15 @@ const Index = () => {
               
               <Card className="p-8 bg-primary/5 border-primary/20">
                 <blockquote className="text-lg italic mb-4">
-                  "TeamForm reduced our patient intake time by 80% and eliminated data entry errors. It's been transformative for our practice."
+                  "Trakilfy reduced our data collection time by 80% and eliminated data entry errors. It's been transformative for our operations."
                 </blockquote>
                 <div className="flex items-center space-x-3">
                   <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
                     <Building className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="font-semibold">Dr. Sarah Johnson</p>
-                    <p className="text-sm text-muted-foreground">Medical Director, Metro Health</p>
+                    <p className="font-semibold">Sarah Johnson</p>
+                    <p className="text-sm text-muted-foreground">Operations Director</p>
                   </div>
                 </div>
               </Card>
@@ -252,7 +280,7 @@ const Index = () => {
               Ready to Transform Your Practice?
             </h2>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Join hundreds of healthcare providers who've already revolutionized their form management with TeamForm.
+              Join hundreds of teams who've already revolutionized their data collection with Trakilfy.
             </p>
             
             <div className="flex items-center justify-center space-x-8 mb-12">
@@ -275,9 +303,6 @@ const Index = () => {
                 Start Your Free Trial
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
-              <Button variant="outline" size="lg" className="text-xl px-12 py-8">
-                Schedule Demo
-              </Button>
             </div>
           </div>
         </div>
@@ -286,7 +311,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t bg-card py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; 2024 TeamForm. All rights reserved.</p>
+          <p>&copy; 2024 Trakilfy. All rights reserved.</p>
         </div>
       </footer>
     </div>
