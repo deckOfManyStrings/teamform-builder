@@ -48,18 +48,18 @@ const Index = () => {
           <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <Star className="h-4 w-4 mr-2" />
-              HIPAA Compliant Healthcare Forms Platform
+              Client Data Management Platform
             </div>
             <h1 className="text-6xl font-bold tracking-tight mb-6">
               Data Collection
-              <span className="text-primary block bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">Reimagined</span>
+              <span className="text-primary block bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">Simplified</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Stop wasting time with paper forms and complex systems. Trakilfy makes data collection effortless, secure, and collaborative.
+              Build custom forms, collect client data, and collaborate with your team—all in one secure platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-8 py-6 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
-                Start Free Trial
+                Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -67,99 +67,76 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Slide 2: The Problem */}
+      {/* Slide 2: Key Features */}
       <section className="min-h-screen flex items-center justify-center py-20 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold mb-6">The Healthcare Forms Crisis</h2>
+              <h2 className="text-5xl font-bold mb-6">Everything You Need</h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Medical practices waste countless hours on outdated form management systems
+                A complete platform for managing client data and forms
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <Card className="p-8 text-center border-destructive/20">
-                <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-                  <Clock className="h-8 w-8 text-destructive" />
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <FileText className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">3+ Hours Daily</h3>
+                <h3 className="text-xl font-semibold mb-4">Custom Form Builder</h3>
                 <p className="text-muted-foreground">
-                  Average time staff spend on manual form processing and data entry
+                  Create forms with various field types to capture exactly the data you need
                 </p>
               </Card>
               
-              <Card className="p-8 text-center border-destructive/20">
-                <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-                  <AlertTriangle className="h-8 w-8 text-destructive" />
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <Users className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">78% Error Rate</h3>
+                <h3 className="text-xl font-semibold mb-4">Team Collaboration</h3>
                 <p className="text-muted-foreground">
-                  Manual data entry leads to critical errors in patient information
+                  Role-based permissions with managers, staff, and admins working together
                 </p>
               </Card>
               
-              <Card className="p-8 text-center border-destructive/20">
-                <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-                  <TrendingUp className="h-8 w-8 text-destructive" />
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <BarChart className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">$50K+ Lost</h3>
+                <h3 className="text-xl font-semibold mb-4">Analytics & Export</h3>
                 <p className="text-muted-foreground">
-                  Annual revenue loss due to inefficient form management per practice
+                  View dashboards, audit trails, and export data in multiple formats
                 </p>
               </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Slide 3: The Solution */}
-      <section className="min-h-screen flex items-center justify-center py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold mb-6">Meet Trakilfy</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                The all-in-one forms platform that saves time, reduces errors, and improves data collection
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
-                <div className="flex items-start space-x-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Smart Form Builder</h3>
-                    <p className="text-muted-foreground">Create custom forms in minutes with our intuitive drag-and-drop interface</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Team Collaboration</h3>
-                    <p className="text-muted-foreground">Real-time collaboration with role-based permissions for your entire team</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Secure & Compliant</h3>
-                    <p className="text-muted-foreground">Built-in security features ensure data protection and regulatory compliance</p>
-                  </div>
-                </div>
-              </div>
               
-              <div className="bg-muted/30 rounded-2xl p-8 text-center">
-                <div className="text-6xl font-bold text-primary mb-4">94%</div>
-                <p className="text-xl font-semibold mb-2">Time Savings</p>
-                <p className="text-muted-foreground">Practices report spending 94% less time on form management</p>
-              </div>
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <Shield className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Secure Storage</h3>
+                <p className="text-muted-foreground">
+                  Your client data is encrypted and securely stored with regular backups
+                </p>
+              </Card>
+              
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <UserPlus className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Client Management</h3>
+                <p className="text-muted-foreground">
+                  Organize submissions by client with detailed profiles and history
+                </p>
+              </Card>
+              
+              <Card className="p-8 text-center">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <Clock className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Audit Trails</h3>
+                <p className="text-muted-foreground">
+                  Track all changes and submissions with complete audit history
+                </p>
+              </Card>
             </div>
           </div>
         </div>
@@ -421,71 +398,23 @@ const Index = () => {
 
             <div className="mt-12 text-center">
               <p className="text-muted-foreground">
-                All plans include 30-day free trial • No credit card required • Cancel anytime
+                Start free • No credit card required • Cancel anytime
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Slide 6: Traction */}
-      <section className="min-h-screen flex items-center justify-center py-20 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-bold mb-6">Proven Results</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Teams trust Trakilfy to streamline their operations
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">500+</div>
-                  <p className="text-muted-foreground">Active Practices</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">10K+</div>
-                  <p className="text-muted-foreground">Forms Created</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">99.9%</div>
-                  <p className="text-muted-foreground">Uptime SLA</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">4.9★</div>
-                  <p className="text-muted-foreground">User Rating</p>
-                </div>
-              </div>
-              
-              <Card className="p-8 bg-primary/5 border-primary/20">
-                <blockquote className="text-lg italic mb-4">
-                  "Trakilfy reduced our data collection time by 80% and eliminated data entry errors. It's been transformative for our operations."
-                </blockquote>
-                <div className="flex items-center space-x-3">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Building className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Sarah Johnson</p>
-                    <p className="text-sm text-muted-foreground">Operations Director</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Slide 7: Call to Action */}
       <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/15 via-background to-accent/10 py-20">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <h2 className="text-6xl font-bold mb-6">
-              Ready to Transform Your Practice?
+              Ready to Get Started?
             </h2>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Join hundreds of teams who've already revolutionized their data collection. Start free, upgrade when ready.
+              Start managing your client data more efficiently today. No credit card required.
             </p>
             
             <div className="flex items-center justify-center space-x-8 mb-12">
