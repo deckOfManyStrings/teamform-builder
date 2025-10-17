@@ -14,7 +14,6 @@ import FormList from "@/components/forms/FormList";
 import SubmissionList from "@/components/submissions/SubmissionList";
 import AnalyticsDashboard from "@/components/reports/AnalyticsDashboard";
 import AuditTrail from "@/components/reports/AuditTrail";
-
 interface UserProfile {
   id: string;
   email: string;
@@ -24,7 +23,6 @@ interface UserProfile {
   role: string | null;
   is_active: boolean;
 }
-
 interface BusinessData {
   id: string;
   name: string;
@@ -32,55 +30,50 @@ interface BusinessData {
   phone: string | null;
   created_at: string;
 }
-
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const [teamStats, setTeamStats] = useState({ 
-    memberCount: 0, 
-    formCount: 0, 
-    submissionCount: 0, 
-    clientCount: 0, 
-    pendingReview: 0 
+  const [teamStats, setTeamStats] = useState({
+    memberCount: 0,
+    formCount: 0,
+    submissionCount: 0,
+    clientCount: 0,
+    pendingReview: 0
   });
-
   useEffect(() => {
     if (user) {
       fetchProfile();
     }
   }, [user]);
-
   const fetchProfile = async () => {
     if (!user) return;
-
     try {
       // Try to get user profile
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-
+      const {
+        data: userData,
+        error: userError
+      } = await supabase.from('users').select('*').eq('id', user.id).maybeSingle();
       if (userError && userError.code !== 'PGRST116') {
         throw userError;
       }
 
       // If no profile exists, create one
       if (!userData) {
-        const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .insert({
-            id: user.id,
-            email: user.email || '',
-            first_name: user.user_metadata?.first_name || null,
-            last_name: user.user_metadata?.last_name || null,
-          })
-          .select()
-          .single();
-
+        const {
+          data: newUser,
+          error: createError
+        } = await supabase.from('users').insert({
+          id: user.id,
+          email: user.email || '',
+          first_name: user.user_metadata?.first_name || null,
+          last_name: user.user_metadata?.last_name || null
+        }).select().single();
         if (createError) throw createError;
         setProfile(newUser);
       } else {
@@ -98,63 +91,60 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
-
   const fetchBusinessData = async (businessId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('businesses')
-        .select('*')
-        .eq('id', businessId)
-        .single();
-
+      const {
+        data,
+        error
+      } = await supabase.from('businesses').select('*').eq('id', businessId).single();
       if (error) throw error;
       setBusiness(data);
     } catch (error) {
       console.error('Error fetching business:', error);
     }
   };
-
   const fetchTeamStats = async (businessId: string) => {
     try {
       // Get member count
-      const { count: memberCount } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
-        .eq('business_id', businessId)
-        .eq('is_active', true);
+      const {
+        count: memberCount
+      } = await supabase.from('users').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('business_id', businessId).eq('is_active', true);
 
       // Get client count
-      const { count: clientCount } = await supabase
-        .from('clients')
-        .select('*', { count: 'exact', head: true })
-        .eq('business_id', businessId)
-        .eq('is_active', true);
+      const {
+        count: clientCount
+      } = await supabase.from('clients').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('business_id', businessId).eq('is_active', true);
 
       // Get form count
-      const { count: formCount } = await supabase
-        .from('forms')
-        .select('*', { count: 'exact', head: true })
-        .eq('business_id', businessId);
+      const {
+        count: formCount
+      } = await supabase.from('forms').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('business_id', businessId);
 
       // Get submission count
-      const formIds = (await supabase
-        .from('forms')
-        .select('id')
-        .eq('business_id', businessId)
-      ).data?.map(f => f.id) || [];
-
-      const { count: submissionCount } = await supabase
-        .from('form_submissions')
-        .select('form_id', { count: 'exact', head: true })
-        .in('form_id', formIds);
+      const formIds = (await supabase.from('forms').select('id').eq('business_id', businessId)).data?.map(f => f.id) || [];
+      const {
+        count: submissionCount
+      } = await supabase.from('form_submissions').select('form_id', {
+        count: 'exact',
+        head: true
+      }).in('form_id', formIds);
 
       // Get pending review count
-      const { count: pendingReview } = await supabase
-        .from('form_submissions')
-        .select('form_id', { count: 'exact', head: true })
-        .in('form_id', formIds)
-        .eq('status', 'submitted');
-
+      const {
+        count: pendingReview
+      } = await supabase.from('form_submissions').select('form_id', {
+        count: 'exact',
+        head: true
+      }).in('form_id', formIds).eq('status', 'submitted');
       setTeamStats({
         memberCount: memberCount || 0,
         clientCount: clientCount || 0,
@@ -166,130 +156,43 @@ export default function Dashboard() {
       console.error('Error fetching team stats:', error);
     }
   };
-
   const handleBusinessCreated = () => {
     fetchProfile(); // Refresh to get the new business association
   };
-
   const handleSignOut = async () => {
     await signOut();
   };
-
   const getInitials = (firstName: string | null, lastName: string | null) => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase() || 'U';
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+    return <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <SidebarProvider>
+  return <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        {profile?.business_id && (
-          <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        )}
+        {profile?.business_id && <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />}
         
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Header */}
           <header className="border-b bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
-            <div className="container mx-auto px-4 lg:px-6 py-4">
-              {profile?.business_id && (
-                <div className="mb-3">
-                  <SidebarTrigger />
-                </div>
-              )}
-              {/* Mobile Header Layout */}
-              <div className="flex items-center justify-between lg:hidden">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-slate-900 p-2.5 rounded-lg">
-                    <Building className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-lg font-semibold text-slate-900">Trakilfy</h1>
-                    <p className="text-xs text-slate-500">Enterprise</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8 border border-slate-200">
-                    <AvatarFallback className="text-xs bg-slate-100 text-slate-700 font-medium">
-                      {getInitials(profile?.first_name, profile?.last_name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2 text-slate-500 hover:text-red-600 hover:bg-red-50">
-                    <LogOut className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Desktop Header Layout */}
-              <div className="hidden lg:flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-slate-900 p-3 rounded-xl shadow-lg">
-                    <Building className="h-7 w-7 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Trakilfy</h1>
-                    <p className="text-sm text-slate-500">Forms & Client Management Platform</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  {business && (
-                    <div className="hidden xl:flex items-center space-x-2 text-sm">
-                      <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
-                        {business.name}
-                      </div>
-                      <span className="text-slate-400">•</span>
-                      <span className="text-slate-600 capitalize">{profile?.role}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center space-x-3 bg-white border border-slate-200 rounded-lg px-4 py-2 shadow-sm">
-                    <Avatar className="h-8 w-8 border border-slate-200">
-                      <AvatarFallback className="bg-slate-100 text-slate-700 font-medium text-sm">
-                        {getInitials(profile?.first_name, profile?.last_name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-sm">
-                      <p className="font-medium text-slate-900">
-                        {profile?.first_name} {profile?.last_name}
-                      </p>
-                      <p className="text-slate-500 capitalize text-xs">
-                        {profile?.role || 'Staff Member'}
-                      </p>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleSignOut}
-                    className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
-                  >
-                    <LogOut className="h-4 w-4 mr-1.5" />
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            </div>
+            
           </header>
 
           {/* Main Content */}
           <main className="bg-slate-50 min-h-screen flex-1">
             <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
-              {!profile?.business_id ? (
-                // No business setup yet
-                <div className="max-w-2xl mx-auto animate-fade-in">
+              {!profile?.business_id ?
+            // No business setup yet
+            <div className="max-w-2xl mx-auto animate-fade-in">
                   <BusinessSetup onBusinessCreated={handleBusinessCreated} />
-                </div>
-              ) : (
-                // Business exists, show dashboard
-                <div className="space-y-6 lg:space-y-8 animate-fade-in">
+                </div> :
+            // Business exists, show dashboard
+            <div className="space-y-6 lg:space-y-8 animate-fade-in">
                   {/* Welcome Section */}
                   <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -308,19 +211,18 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="text-sm text-slate-500">
-                        {new Date().toLocaleDateString('en-US', { 
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
+                        {new Date().toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                       </div>
                     </div>
                   </div>
 
                   {/* Content based on active tab */}
-                  {activeTab === "overview" && (
-                    <div className="space-y-6 animate-fade-in">
+                  {activeTab === "overview" && <div className="space-y-6 animate-fade-in">
                       {/* Enterprise KPI Cards */}
                       <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
@@ -386,14 +288,8 @@ export default function Dashboard() {
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
                             <CardTitle className="text-sm font-medium text-slate-600">Pending Review</CardTitle>
-                            <div className={`p-2 rounded-lg transition-colors ${
-                              teamStats.pendingReview > 0 
-                                ? 'bg-amber-50 group-hover:bg-amber-100' 
-                                : 'bg-slate-50 group-hover:bg-slate-100'
-                            }`}>
-                              <BarChart3 className={`h-4 w-4 ${
-                                teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'
-                              }`} />
+                            <div className={`p-2 rounded-lg transition-colors ${teamStats.pendingReview > 0 ? 'bg-amber-50 group-hover:bg-amber-100' : 'bg-slate-50 group-hover:bg-slate-100'}`}>
+                              <BarChart3 className={`h-4 w-4 ${teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'}`} />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
@@ -420,8 +316,7 @@ export default function Dashboard() {
                         </CardHeader>
                         <CardContent className="pt-6">
                           <div className="space-y-4">
-                            {teamStats.submissionCount > 0 ? (
-                              <div className="space-y-3">
+                            {teamStats.submissionCount > 0 ? <div className="space-y-3">
                                 <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
                                   <div className="flex items-center gap-3">
                                     <div className="p-2 bg-green-100 rounded-full">
@@ -434,8 +329,7 @@ export default function Dashboard() {
                                   <span className="text-lg font-semibold text-green-900">{teamStats.submissionCount}</span>
                                 </div>
                                 
-                                {teamStats.pendingReview > 0 && (
-                                  <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                {teamStats.pendingReview > 0 && <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
                                     <div className="flex items-center gap-3">
                                       <div className="p-2 bg-amber-100 rounded-full">
                                         <BarChart3 className="h-4 w-4 text-amber-700" />
@@ -445,8 +339,7 @@ export default function Dashboard() {
                                       </span>
                                     </div>
                                     <span className="text-lg font-semibold text-amber-900">{teamStats.pendingReview}</span>
-                                  </div>
-                                )}
+                                  </div>}
                                 
                                 <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
                                   <div className="flex items-center gap-3">
@@ -471,9 +364,7 @@ export default function Dashboard() {
                                   </div>
                                   <span className="text-lg font-semibold text-purple-900">{teamStats.formCount}</span>
                                 </div>
-                              </div>
-                            ) : (
-                              <div className="text-center py-12">
+                              </div> : <div className="text-center py-12">
                                 <div className="p-6 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 inline-block">
                                   <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                                   <p className="text-slate-600 font-medium mb-2">Getting Started</p>
@@ -481,50 +372,36 @@ export default function Dashboard() {
                                     Begin by creating form templates and registering clients to start collecting client data.
                                   </p>
                                 </div>
-                              </div>
-                            )}
+                              </div>}
                           </div>
                         </CardContent>
                       </Card>
-                    </div>
-                  )}
+                    </div>}
 
-                  {activeTab === "clients" && (
-                    <div className="animate-fade-in">
+                  {activeTab === "clients" && <div className="animate-fade-in">
                       <ClientList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    </div>
-                  )}
+                    </div>}
 
-                  {activeTab === "forms" && (
-                    <div className="animate-fade-in">
+                  {activeTab === "forms" && <div className="animate-fade-in">
                       <FormList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    </div>
-                  )}
+                    </div>}
 
-                  {activeTab === "submissions" && (
-                    <div className="animate-fade-in">
+                  {activeTab === "submissions" && <div className="animate-fade-in">
                       <SubmissionList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    </div>
-                  )}
+                    </div>}
 
-                  {activeTab === "team" && (
-                    <div className="animate-fade-in">
+                  {activeTab === "team" && <div className="animate-fade-in">
                       <TeamManagement businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    </div>
-                  )}
+                    </div>}
 
-                  {activeTab === "reports" && (
-                    <div className="space-y-6 animate-fade-in">
+                  {activeTab === "reports" && <div className="space-y-6 animate-fade-in">
                       <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
                       <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    </div>
-                  )}
-                </div>
-              )}
+                    </div>}
+                </div>}
             </div>
           </main>
         </div>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 }
