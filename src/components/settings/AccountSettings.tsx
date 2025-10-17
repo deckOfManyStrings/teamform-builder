@@ -32,13 +32,18 @@ interface BusinessData {
 export default function AccountSettings() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { data: limits } = useSubscriptionLimits();
+  const { data: limits, isLoading: limitsLoading } = useSubscriptionLimits();
   const { tier, subscribed, openCustomerPortal } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  useEffect(() => {
+    console.log("AccountSettings - limits:", limits);
+    console.log("AccountSettings - limitsLoading:", limitsLoading);
+  }, [limits, limitsLoading]);
 
   useEffect(() => {
     fetchProfile();
@@ -123,7 +128,17 @@ export default function AccountSettings() {
       </div>
 
       {/* Subscription & Usage */}
-      {limits && (
+      {limitsLoading && (
+        <Card>
+          <CardContent className="p-8">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {!limitsLoading && limits && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -226,6 +241,20 @@ export default function AccountSettings() {
               />
             </div>
           </CardContent>
+        </Card>
+      )}
+
+      {!limitsLoading && !limits && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5" />
+              Subscription & Usage
+            </CardTitle>
+            <CardDescription>
+              Unable to load subscription information
+            </CardDescription>
+          </CardHeader>
         </Card>
       )}
 
