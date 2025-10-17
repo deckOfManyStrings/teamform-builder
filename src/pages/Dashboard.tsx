@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { LogOut, Users, FileText, Building, UserCheck, BarChart3 } from "lucide-react";
+import { AppSidebar } from "@/components/AppSidebar";
 import BusinessSetup from "@/components/team/BusinessSetup";
 import TeamManagement from "@/components/team/TeamManagement";
 import ClientList from "@/components/clients/ClientList";
@@ -37,6 +38,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
   const [teamStats, setTeamStats] = useState({ 
     memberCount: 0, 
     formCount: 0, 
@@ -189,345 +191,340 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto px-4 lg:px-6 py-4">
-          {/* Mobile Header Layout */}
-          <div className="flex items-center justify-between lg:hidden">
-            <div className="flex items-center space-x-3">
-              <div className="bg-slate-900 p-2.5 rounded-lg">
-                <Building className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-slate-900">Vendor Forms</h1>
-                <p className="text-xs text-slate-500">Enterprise</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8 border border-slate-200">
-                <AvatarFallback className="text-xs bg-slate-100 text-slate-700 font-medium">
-                  {getInitials(profile?.first_name, profile?.last_name)}
-                </AvatarFallback>
-              </Avatar>
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2 text-slate-500 hover:text-red-600 hover:bg-red-50">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          
-          {/* Desktop Header Layout */}
-          <div className="hidden lg:flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="bg-slate-900 p-3 rounded-xl shadow-lg">
-                <Building className="h-7 w-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Vendor Forms Enterprise</h1>
-                <p className="text-sm text-slate-500">Vendor Management & Forms Platform</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {business && (
-                <div className="hidden xl:flex items-center space-x-2 text-sm">
-                  <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
-                    {business.name}
-                  </div>
-                  <span className="text-slate-400">•</span>
-                  <span className="text-slate-600 capitalize">{profile?.role}</span>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        {profile?.business_id && (
+          <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        )}
+        
+        <div className="flex-1 flex flex-col min-h-screen">
+          {/* Header */}
+          <header className="border-b bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
+            <div className="container mx-auto px-4 lg:px-6 py-4">
+              {profile?.business_id && (
+                <div className="mb-3">
+                  <SidebarTrigger />
                 </div>
               )}
-              <div className="flex items-center space-x-3 bg-white border border-slate-200 rounded-lg px-4 py-2 shadow-sm">
-                <Avatar className="h-8 w-8 border border-slate-200">
-                  <AvatarFallback className="bg-slate-100 text-slate-700 font-medium text-sm">
-                    {getInitials(profile?.first_name, profile?.last_name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-sm">
-                  <p className="font-medium text-slate-900">
-                    {profile?.first_name} {profile?.last_name}
-                  </p>
-                  <p className="text-slate-500 capitalize text-xs">
-                    {profile?.role || 'Staff Member'}
-                  </p>
+              {/* Mobile Header Layout */}
+              <div className="flex items-center justify-between lg:hidden">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-slate-900 p-2.5 rounded-lg">
+                    <Building className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-semibold text-slate-900">Trakilfy</h1>
+                    <p className="text-xs text-slate-500">Enterprise</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-8 w-8 border border-slate-200">
+                    <AvatarFallback className="text-xs bg-slate-100 text-slate-700 font-medium">
+                      {getInitials(profile?.first_name, profile?.last_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button variant="ghost" size="sm" onClick={handleSignOut} className="px-2 text-slate-500 hover:text-red-600 hover:bg-red-50">
+                    <LogOut className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleSignOut}
-                className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
-              >
-                <LogOut className="h-4 w-4 mr-1.5" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="bg-slate-50 min-h-screen">
-        <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
-          {!profile?.business_id ? (
-            // No business setup yet
-            <div className="max-w-2xl mx-auto animate-fade-in">
-              <BusinessSetup onBusinessCreated={handleBusinessCreated} />
-            </div>
-          ) : (
-            // Business exists, show dashboard
-            <div className="space-y-6 lg:space-y-8 animate-fade-in">
-              {/* Welcome Section */}
-              <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              
+              {/* Desktop Header Layout */}
+              <div className="hidden lg:flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-slate-900 p-3 rounded-xl shadow-lg">
+                    <Building className="h-7 w-7 text-white" />
+                  </div>
                   <div>
-                    <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
-                      Welcome back, {profile?.first_name || 'User'}
-                    </h2>
-                    <div className="flex items-center gap-3 mt-2">
-                      <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                        {business?.name}
-                      </span>
+                    <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Trakilfy</h1>
+                    <p className="text-sm text-slate-500">Forms & Client Management Platform</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  {business && (
+                    <div className="hidden xl:flex items-center space-x-2 text-sm">
+                      <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
+                        {business.name}
+                      </div>
                       <span className="text-slate-400">•</span>
-                      <span className="text-slate-600 capitalize text-sm">
-                        {profile?.role?.replace('_', ' ') || 'staff member'}
-                      </span>
+                      <span className="text-slate-600 capitalize">{profile?.role}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center space-x-3 bg-white border border-slate-200 rounded-lg px-4 py-2 shadow-sm">
+                    <Avatar className="h-8 w-8 border border-slate-200">
+                      <AvatarFallback className="bg-slate-100 text-slate-700 font-medium text-sm">
+                        {getInitials(profile?.first_name, profile?.last_name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-sm">
+                      <p className="font-medium text-slate-900">
+                        {profile?.first_name} {profile?.last_name}
+                      </p>
+                      <p className="text-slate-500 capitalize text-xs">
+                        {profile?.role || 'Staff Member'}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-sm text-slate-500">
-                    {new Date().toLocaleDateString('en-US', { 
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleSignOut}
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4 mr-1.5" />
+                    Sign Out
+                  </Button>
                 </div>
               </div>
+            </div>
+          </header>
 
-              {/* Navigation Tabs */}
-              <Tabs defaultValue="overview" className="space-y-6">
-                {/* Mobile Scrollable Tabs */}
-                <div className="lg:hidden -mx-4 px-4">
-                  <div className="overflow-x-auto scrollbar-hide">
-                    <TabsList className="inline-flex h-11 items-center justify-start bg-white border border-slate-200 rounded-lg p-1 text-slate-600 min-w-max shadow-sm">
-                      <TabsTrigger value="overview" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Overview</TabsTrigger>
-                      <TabsTrigger value="clients" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Clients</TabsTrigger>
-                      <TabsTrigger value="forms" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Forms</TabsTrigger>
-                      <TabsTrigger value="submissions" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Submissions</TabsTrigger>
-                      <TabsTrigger value="team" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Team</TabsTrigger>
-                      <TabsTrigger value="reports" className="whitespace-nowrap px-4 py-2 text-sm rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all">Reports</TabsTrigger>
-                    </TabsList>
-                  </div>
+          {/* Main Content */}
+          <main className="bg-slate-50 min-h-screen flex-1">
+            <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+              {!profile?.business_id ? (
+                // No business setup yet
+                <div className="max-w-2xl mx-auto animate-fade-in">
+                  <BusinessSetup onBusinessCreated={handleBusinessCreated} />
                 </div>
-                
-                {/* Desktop Tabs */}
-                <div className="hidden lg:block">
-                  <TabsList className="grid w-full grid-cols-6 bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
-                    <TabsTrigger value="overview" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Overview</TabsTrigger>
-                    <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Clients</TabsTrigger>
-                    <TabsTrigger value="forms" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Forms</TabsTrigger>
-                    <TabsTrigger value="submissions" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Submissions</TabsTrigger>
-                    <TabsTrigger value="team" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Team</TabsTrigger>
-                    <TabsTrigger value="reports" className="rounded-md data-[state=active]:bg-slate-900 data-[state=active]:text-white font-medium transition-all py-2.5">Reports</TabsTrigger>
-                  </TabsList>
-                </div>
-
-                <TabsContent value="overview" className="space-y-6 animate-fade-in">
-                  {/* Enterprise KPI Cards */}
-                  <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
-                    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Active Clients</CardTitle>
-                        <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                          <UserCheck className="h-4 w-4 text-green-600" />
+              ) : (
+                // Business exists, show dashboard
+                <div className="space-y-6 lg:space-y-8 animate-fade-in">
+                  {/* Welcome Section */}
+                  <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      <div>
+                        <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
+                          Welcome back, {profile?.first_name || 'User'}
+                        </h2>
+                        <div className="flex items-center gap-3 mt-2">
+                          <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                            {business?.name}
+                          </span>
+                          <span className="text-slate-400">•</span>
+                          <span className="text-slate-600 capitalize text-sm">
+                            {profile?.role?.replace('_', ' ') || 'staff member'}
+                          </span>
                         </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-2xl font-semibold text-slate-900">{teamStats.clientCount}</div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {teamStats.clientCount === 0 ? 'No clients registered' : 'registered clients'}
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Team Size</CardTitle>
-                        <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                          <Users className="h-4 w-4 text-blue-600" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-2xl font-semibold text-slate-900">{teamStats.memberCount}</div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {teamStats.memberCount === 1 ? 'Only you' : 'active members'}
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Active Forms</CardTitle>
-                        <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
-                          <FileText className="h-4 w-4 text-purple-600" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-2xl font-semibold text-slate-900">{teamStats.formCount}</div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {teamStats.formCount === 0 ? 'No forms created' : 'published forms'}
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Total Submissions</CardTitle>
-                        <div className="p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
-                          <BarChart3 className="h-4 w-4 text-emerald-600" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-2xl font-semibold text-slate-900">{teamStats.submissionCount}</div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {teamStats.submissionCount === 0 ? 'No submissions' : 'completed forms'}
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                        <CardTitle className="text-sm font-medium text-slate-600">Pending Review</CardTitle>
-                        <div className={`p-2 rounded-lg transition-colors ${
-                          teamStats.pendingReview > 0 
-                            ? 'bg-amber-50 group-hover:bg-amber-100' 
-                            : 'bg-slate-50 group-hover:bg-slate-100'
-                        }`}>
-                          <BarChart3 className={`h-4 w-4 ${
-                            teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'
-                          }`} />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-2xl font-semibold text-slate-900">{teamStats.pendingReview}</div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          awaiting review
-                        </p>
-                      </CardContent>
-                    </Card>
+                      </div>
+                      <div className="text-sm text-slate-500">
+                        {new Date().toLocaleDateString('en-US', { 
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* System Overview */}
-                  <Card className="bg-white border border-slate-200 shadow-sm">
-                    <CardHeader className="border-b border-slate-100">
-                      <CardTitle className="flex items-center gap-3">
-                        <div className="p-2 bg-slate-100 rounded-lg">
-                          <BarChart3 className="h-5 w-5 text-slate-700" />
-                        </div>
-                        System Overview
-                      </CardTitle>
-                    <CardDescription className="text-slate-500">
-                      Current status of your vendor management system
-                    </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-6">
-                      <div className="space-y-4">
-                        {teamStats.submissionCount > 0 ? (
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-green-100 rounded-full">
-                                  <FileText className="h-4 w-4 text-green-700" />
-                                </div>
-                                <span className="text-sm font-medium text-green-800">
-                                  Total form submissions processed
-                                </span>
-                              </div>
-                              <span className="text-lg font-semibold text-green-900">{teamStats.submissionCount}</span>
+                  {/* Content based on active tab */}
+                  {activeTab === "overview" && (
+                    <div className="space-y-6 animate-fade-in">
+                      {/* Enterprise KPI Cards */}
+                      <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
+                        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                            <CardTitle className="text-sm font-medium text-slate-600">Active Clients</CardTitle>
+                            <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                              <UserCheck className="h-4 w-4 text-green-600" />
                             </div>
-                            
-                            {teamStats.pendingReview > 0 && (
-                              <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                  <div className="p-2 bg-amber-100 rounded-full">
-                                    <BarChart3 className="h-4 w-4 text-amber-700" />
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-2xl font-semibold text-slate-900">{teamStats.clientCount}</div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {teamStats.clientCount === 0 ? 'No clients registered' : 'registered clients'}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                            <CardTitle className="text-sm font-medium text-slate-600">Team Size</CardTitle>
+                            <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                              <Users className="h-4 w-4 text-blue-600" />
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-2xl font-semibold text-slate-900">{teamStats.memberCount}</div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {teamStats.memberCount === 1 ? 'Only you' : 'active members'}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                            <CardTitle className="text-sm font-medium text-slate-600">Active Forms</CardTitle>
+                            <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
+                              <FileText className="h-4 w-4 text-purple-600" />
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-2xl font-semibold text-slate-900">{teamStats.formCount}</div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {teamStats.formCount === 0 ? 'No forms created' : 'published forms'}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                            <CardTitle className="text-sm font-medium text-slate-600">Total Submissions</CardTitle>
+                            <div className="p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                              <BarChart3 className="h-4 w-4 text-emerald-600" />
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-2xl font-semibold text-slate-900">{teamStats.submissionCount}</div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {teamStats.submissionCount === 0 ? 'No submissions' : 'completed forms'}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                            <CardTitle className="text-sm font-medium text-slate-600">Pending Review</CardTitle>
+                            <div className={`p-2 rounded-lg transition-colors ${
+                              teamStats.pendingReview > 0 
+                                ? 'bg-amber-50 group-hover:bg-amber-100' 
+                                : 'bg-slate-50 group-hover:bg-slate-100'
+                            }`}>
+                              <BarChart3 className={`h-4 w-4 ${
+                                teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'
+                              }`} />
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-2xl font-semibold text-slate-900">{teamStats.pendingReview}</div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              awaiting review
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* System Overview */}
+                      <Card className="bg-white border border-slate-200 shadow-sm">
+                        <CardHeader className="border-b border-slate-100">
+                          <CardTitle className="flex items-center gap-3">
+                            <div className="p-2 bg-slate-100 rounded-lg">
+                              <BarChart3 className="h-5 w-5 text-slate-700" />
+                            </div>
+                            System Overview
+                          </CardTitle>
+                        <CardDescription className="text-slate-500">
+                          Current status of your management system
+                        </CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                          <div className="space-y-4">
+                            {teamStats.submissionCount > 0 ? (
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-green-100 rounded-full">
+                                      <FileText className="h-4 w-4 text-green-700" />
+                                    </div>
+                                    <span className="text-sm font-medium text-green-800">
+                                      Total form submissions processed
+                                    </span>
                                   </div>
-                                  <span className="text-sm font-medium text-amber-800">
-                                    Submissions requiring review
-                                  </span>
+                                  <span className="text-lg font-semibold text-green-900">{teamStats.submissionCount}</span>
                                 </div>
-                                <span className="text-lg font-semibold text-amber-900">{teamStats.pendingReview}</span>
+                                
+                                {teamStats.pendingReview > 0 && (
+                                  <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                      <div className="p-2 bg-amber-100 rounded-full">
+                                        <BarChart3 className="h-4 w-4 text-amber-700" />
+                                      </div>
+                                      <span className="text-sm font-medium text-amber-800">
+                                        Submissions requiring review
+                                      </span>
+                                    </div>
+                                    <span className="text-lg font-semibold text-amber-900">{teamStats.pendingReview}</span>
+                                  </div>
+                                )}
+                                
+                                <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-100 rounded-full">
+                                      <Users className="h-4 w-4 text-blue-700" />
+                                    </div>
+                                    <span className="text-sm font-medium text-blue-800">
+                                      Active client registrations
+                                    </span>
+                                  </div>
+                                  <span className="text-lg font-semibold text-blue-900">{teamStats.clientCount}</span>
+                                </div>
+                                
+                                <div className="flex items-center justify-between p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-purple-100 rounded-full">
+                                      <FileText className="h-4 w-4 text-purple-700" />
+                                    </div>
+                                    <span className="text-sm font-medium text-purple-800">
+                                      Published form templates
+                                    </span>
+                                  </div>
+                                  <span className="text-lg font-semibold text-purple-900">{teamStats.formCount}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-center py-12">
+                                <div className="p-6 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 inline-block">
+                                  <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                                  <p className="text-slate-600 font-medium mb-2">Getting Started</p>
+                                  <p className="text-sm text-slate-500 max-w-sm mx-auto">
+                                    Begin by creating form templates and registering clients to start collecting client data.
+                                  </p>
+                                </div>
                               </div>
                             )}
-                            
-                            <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 rounded-full">
-                                  <Users className="h-4 w-4 text-blue-700" />
-                                </div>
-                                <span className="text-sm font-medium text-blue-800">
-                                  Active vendor registrations
-                                </span>
-                              </div>
-                              <span className="text-lg font-semibold text-blue-900">{teamStats.clientCount}</span>
-                            </div>
-                            
-                            <div className="flex items-center justify-between p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-purple-100 rounded-full">
-                                  <FileText className="h-4 w-4 text-purple-700" />
-                                </div>
-                                <span className="text-sm font-medium text-purple-800">
-                                  Published form templates
-                                </span>
-                              </div>
-                              <span className="text-lg font-semibold text-purple-900">{teamStats.formCount}</span>
-                            </div>
                           </div>
-                        ) : (
-                          <div className="text-center py-12">
-                            <div className="p-6 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 inline-block">
-                              <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                              <p className="text-slate-600 font-medium mb-2">Getting Started</p>
-                              <p className="text-sm text-slate-500 max-w-sm mx-auto">
-                                Begin by creating form templates and registering clients to start collecting client data.
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-              </TabsContent>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
 
-                <TabsContent value="clients" className="animate-fade-in">
-                  <ClientList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                </TabsContent>
+                  {activeTab === "clients" && (
+                    <div className="animate-fade-in">
+                      <ClientList businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>
+                  )}
 
-                <TabsContent value="submissions" className="animate-fade-in">
-                  <SubmissionList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                </TabsContent>
+                  {activeTab === "forms" && (
+                    <div className="animate-fade-in">
+                      <FormList businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>
+                  )}
 
-                <TabsContent value="team" className="animate-fade-in">
-                  <TeamManagement businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                </TabsContent>
+                  {activeTab === "submissions" && (
+                    <div className="animate-fade-in">
+                      <SubmissionList businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>
+                  )}
 
-                <TabsContent value="forms" className="animate-fade-in">
-                  <FormList businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                </TabsContent>
+                  {activeTab === "team" && (
+                    <div className="animate-fade-in">
+                      <TeamManagement businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>
+                  )}
 
-                <TabsContent value="reports" className="animate-fade-in">
-                  <div className="space-y-6">
-                    <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                    <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
-                  </div>
-                </TabsContent>
-              </Tabs>
+                  {activeTab === "reports" && (
+                    <div className="space-y-6 animate-fade-in">
+                      <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                      <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          )}
+          </main>
         </div>
-      </main>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }
