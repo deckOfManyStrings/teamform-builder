@@ -193,36 +193,35 @@ export default function Dashboard() {
                 </div> :
             // Business exists, show dashboard
             <div className="space-y-6 lg:space-y-8 animate-fade-in">
-                  {/* Welcome Section */}
-                  <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                      <div>
-                        <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
-                          Welcome back, {profile?.first_name || 'User'}
-                        </h2>
-                        <div className="flex items-center gap-3 mt-2">
-                          <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                            {business?.name}
-                          </span>
-                          <span className="text-slate-400">•</span>
-                          <span className="text-slate-600 capitalize text-sm">
-                            {profile?.role?.replace('_', ' ') || 'staff member'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-sm text-slate-500">
-                        {new Date().toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Content based on active tab */}
                   {activeTab === "overview" && <div className="space-y-6 animate-fade-in">
+                      {/* Welcome Section */}
+                      <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                          <div>
+                            <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
+                              Welcome back, {profile?.first_name || 'User'}
+                            </h2>
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                                {business?.name}
+                              </span>
+                              <span className="text-slate-400">•</span>
+                              <span className="text-slate-600 capitalize text-sm">
+                                {profile?.role?.replace('_', ' ') || 'staff member'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-sm text-slate-500">
+                            {new Date().toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                          </div>
+                        </div>
+                      </div>
                       {/* Enterprise KPI Cards */}
                       <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
