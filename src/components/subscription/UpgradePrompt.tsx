@@ -37,7 +37,7 @@ export const UpgradePrompt = ({ limitType, currentTier }: UpgradePromptProps) =>
     {
       name: "Professional",
       price: "$99",
-      priceId: SUBSCRIPTION_TIERS.professional.priceId,
+      priceId: SUBSCRIPTION_TIERS.premium.priceId,
       features: ["100 clients", "50 staff members", "10 managers", "Advanced analytics", "API access"],
       popular: true,
     },

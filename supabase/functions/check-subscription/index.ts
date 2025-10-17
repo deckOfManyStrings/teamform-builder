@@ -78,7 +78,7 @@ serve(async (req) => {
       // Map product ID to tier
       const tierMap: Record<string, string> = {
         "prod_TFa3TFVucgXtys": "basic",
-        "prod_TFa3HGDqNkonEJ": "professional",
+        "prod_TFa3HGDqNkonEJ": "premium",
         "prod_TFa3X2aOVPsQlZ": "enterprise",
       };
       tier = tierMap[productId] || "free";

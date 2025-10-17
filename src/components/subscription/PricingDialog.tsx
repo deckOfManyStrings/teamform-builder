@@ -45,9 +45,9 @@ const TIERS = [
     priceId: SUBSCRIPTION_TIERS.basic.priceId,
   },
   {
-    id: "professional",
-    name: SUBSCRIPTION_TIERS.professional.name,
-    price: SUBSCRIPTION_TIERS.professional.price,
+    id: "premium",
+    name: SUBSCRIPTION_TIERS.premium.name,
+    price: SUBSCRIPTION_TIERS.premium.price,
     period: "/month",
     description: "For growing practices",
     icon: Crown,
@@ -61,7 +61,7 @@ const TIERS = [
       "API access",
       "Audit trails",
     ],
-    priceId: SUBSCRIPTION_TIERS.professional.priceId,
+    priceId: SUBSCRIPTION_TIERS.premium.priceId,
   },
   {
     id: "enterprise",
