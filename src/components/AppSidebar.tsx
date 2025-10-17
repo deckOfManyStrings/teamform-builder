@@ -1,8 +1,7 @@
-import { LayoutDashboard, Users, FileText, Send, UsersRound, BarChart3, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Send, UsersRound, BarChart3 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
@@ -10,8 +9,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { title: "Overview", icon: LayoutDashboard, value: "overview" },
@@ -30,11 +27,6 @@ interface AppSidebarProps {
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const { signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <Sidebar collapsible="icon">
@@ -58,17 +50,6 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleSignOut} tooltip="Log Out">
-              <LogOut className="h-4 w-4" />
-              {!collapsed && <span>Log Out</span>}
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }
