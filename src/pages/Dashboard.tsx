@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useSubscriptionLimits } from "@/hooks/use-subscription-limits";
-import { UsageIndicator } from "@/components/subscription/UsageIndicator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -38,7 +36,6 @@ export default function Dashboard() {
     user,
     signOut
   } = useAuth();
-  const { data: limits } = useSubscriptionLimits();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -197,13 +194,6 @@ export default function Dashboard() {
                 </div> :
             // Business exists, show dashboard
             <div className="space-y-6 lg:space-y-8 animate-fade-in">
-                  {/* Usage Indicator */}
-                  {limits && (
-                    <div className="animate-fade-in">
-                      <UsageIndicator limits={limits} />
-                    </div>
-                  )}
-                  
                   {/* Content based on active tab */}
                   {activeTab === "overview" && <div className="space-y-6 animate-fade-in">
                       {/* Welcome Section */}

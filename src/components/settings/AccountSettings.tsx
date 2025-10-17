@@ -6,9 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { User, Mail, Shield, Building } from "lucide-react";
+import { User, Mail, Shield, Building, Crown, Sparkles, Users as UsersIcon, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { useSubscriptionLimits } from "@/hooks/use-subscription-limits";
+import { useSubscription } from "@/hooks/use-subscription";
+import { PricingDialog } from "@/components/subscription/PricingDialog";
 
 interface UserProfile {
   id: string;
@@ -28,6 +32,8 @@ interface BusinessData {
 export default function AccountSettings() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { data: limits } = useSubscriptionLimits();
+  const { tier, subscribed, openCustomerPortal } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
@@ -95,6 +101,10 @@ export default function AccountSettings() {
     }
   };
 
+  const getPercentage = (current: number, max: number) => {
+    return (current / max) * 100;
+  };
+
   if (!profile) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -111,6 +121,113 @@ export default function AccountSettings() {
           Manage your account information and preferences
         </p>
       </div>
+
+      {/* Subscription & Usage */}
+      {limits && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="h-5 w-5" />
+                  Subscription & Usage
+                </CardTitle>
+                <CardDescription>
+                  Your current plan and resource usage
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="capitalize text-base px-4 py-1">
+                  {limits.subscription_tier}
+                </Badge>
+                {subscribed ? (
+                  <Button variant="outline" size="sm" onClick={openCustomerPortal}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Manage
+                  </Button>
+                ) : (
+                  <PricingDialog>
+                    <Button variant="default" size="sm">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Upgrade
+                    </Button>
+                  </PricingDialog>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Clients Usage */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Clients</span>
+                </div>
+                <span className="text-muted-foreground">
+                  {limits.current_clients} / {limits.max_clients}
+                </span>
+              </div>
+              <Progress 
+                value={getPercentage(limits.current_clients, limits.max_clients)} 
+                className={
+                  getPercentage(limits.current_clients, limits.max_clients) >= 100 
+                    ? "bg-destructive/20" 
+                    : getPercentage(limits.current_clients, limits.max_clients) >= 80 
+                    ? "bg-warning/20" 
+                    : ""
+                }
+              />
+            </div>
+
+            {/* Staff Usage */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <UsersIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Staff</span>
+                </div>
+                <span className="text-muted-foreground">
+                  {limits.current_staff} / {limits.max_staff}
+                </span>
+              </div>
+              <Progress 
+                value={getPercentage(limits.current_staff, limits.max_staff)} 
+                className={
+                  getPercentage(limits.current_staff, limits.max_staff) >= 100 
+                    ? "bg-destructive/20" 
+                    : getPercentage(limits.current_staff, limits.max_staff) >= 80 
+                    ? "bg-warning/20" 
+                    : ""
+                }
+              />
+            </div>
+
+            {/* Managers Usage */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Managers</span>
+                </div>
+                <span className="text-muted-foreground">
+                  {limits.current_managers} / {limits.max_managers}
+                </span>
+              </div>
+              <Progress 
+                value={getPercentage(limits.current_managers, limits.max_managers)} 
+                className={
+                  getPercentage(limits.current_managers, limits.max_managers) >= 100 
+                    ? "bg-destructive/20" 
+                    : getPercentage(limits.current_managers, limits.max_managers) >= 80 
+                    ? "bg-warning/20" 
+                    : ""
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Profile Information */}
       <Card>
