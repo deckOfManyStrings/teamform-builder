@@ -79,8 +79,8 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
   const onSubmit = async (data: ClientFormData) => {
     if (!user) return;
     
-    // Check limit for new clients
-    if (!client && !canAddClient) {
+    // Check limit for new clients - explicitly check for false (not undefined during loading)
+    if (!client && canAddClient === false) {
       toast({
         title: "Limit Reached",
         description: "You've reached your plan's client limit. Please upgrade to add more clients.",
@@ -255,7 +255,7 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
         <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
           Cancel
         </Button>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || checkingLimit}>
           {loading ? "Saving..." : (client ? "Update Client" : "Add Client")}
         </Button>
       </div>
