@@ -13,7 +13,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { title: "Overview", icon: LayoutDashboard, value: "overview" },
@@ -68,15 +67,15 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4">
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={handleSignOut}
-        >
-          <LogOut className="h-4 w-4" />
-          {!collapsed && <span className="ml-2">Log Out</span>}
-        </Button>
+      <SidebarFooter className="border-t">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleSignOut} tooltip="Log Out">
+              <LogOut className="h-4 w-4" />
+              {!collapsed && <span>Log Out</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
