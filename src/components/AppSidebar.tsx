@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileText, Send, UsersRound, BarChart3, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Send, UsersRound, BarChart3, Settings, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -70,6 +70,17 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
 
       <SidebarFooter className="border-t border-sidebar-border bg-sidebar">
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={activeTab === "accounts"}
+              onClick={() => onTabChange("accounts")}
+              tooltip="Account Settings"
+              className="hover:bg-sidebar-accent data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
+            >
+              <Settings className="h-4 w-4" />
+              {!collapsed && <span>Account</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={handleSignOut} 

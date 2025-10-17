@@ -16,6 +16,7 @@ import FormList from "@/components/forms/FormList";
 import SubmissionList from "@/components/submissions/SubmissionList";
 import AnalyticsDashboard from "@/components/reports/AnalyticsDashboard";
 import AuditTrail from "@/components/reports/AuditTrail";
+import AccountSettings from "@/components/settings/AccountSettings";
 interface UserProfile {
   id: string;
   email: string;
@@ -406,6 +407,10 @@ export default function Dashboard() {
                   {activeTab === "reports" && <div className="space-y-6 animate-fade-in">
                       <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
                       <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                    </div>}
+
+                  {activeTab === "accounts" && <div className="animate-fade-in">
+                      <AccountSettings />
                     </div>}
                 </div>}
             </div>
