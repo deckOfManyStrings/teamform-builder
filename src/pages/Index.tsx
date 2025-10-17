@@ -29,35 +29,35 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-sm bg-background/80 border-b">
+      <header className="fixed top-0 w-full z-50 backdrop-blur-sm bg-sidebar/95 border-b border-sidebar-border shadow-md">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Building className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">Trakilfy</h1>
+            <Building className="h-8 w-8 text-sidebar-primary-foreground" />
+            <h1 className="text-2xl font-bold text-sidebar-foreground">Trakilfy</h1>
           </div>
-          <Button onClick={() => navigate('/auth')} size="sm">
+          <Button onClick={() => navigate('/auth')} size="sm" className="bg-sidebar-primary hover:bg-sidebar-primary/90 text-sidebar-primary-foreground">
             Get Started
           </Button>
         </div>
       </header>
 
       {/* Slide 1: Hero */}
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 pt-20">
+      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/5 pt-20">
         <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <Star className="h-4 w-4 mr-2" />
               HIPAA Compliant Healthcare Forms Platform
             </div>
             <h1 className="text-6xl font-bold tracking-tight mb-6">
               Data Collection
-              <span className="text-primary block">Reimagined</span>
+              <span className="text-primary block bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">Reimagined</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
               Stop wasting time with paper forms and complex systems. Trakilfy makes data collection effortless, secure, and collaborative.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-8 py-6">
+              <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-8 py-6 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -273,9 +273,9 @@ const Index = () => {
       </section>
 
       {/* Slide 6: Call to Action */}
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-20">
+      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/15 via-background to-accent/10 py-20">
         <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
             <h2 className="text-6xl font-bold mb-6">
               Ready to Transform Your Practice?
             </h2>
@@ -299,7 +299,7 @@ const Index = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')} className="text-xl px-12 py-8">
+              <Button size="lg" onClick={() => navigate('/auth')} className="text-xl px-12 py-8 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
                 Start Your Free Trial
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
@@ -309,8 +309,8 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-card py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
+      <footer className="border-t bg-sidebar py-8">
+        <div className="container mx-auto px-4 text-center text-sidebar-foreground/70">
           <p>&copy; 2024 Trakilfy. All rights reserved.</p>
         </div>
       </footer>

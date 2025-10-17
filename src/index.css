@@ -303,6 +303,14 @@
     @apply bg-background/80 backdrop-blur-md border border-border/50;
   }
 
+  /* Grid pattern */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, hsl(var(--primary) / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--primary) / 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
   /* Professional spacing */
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8;

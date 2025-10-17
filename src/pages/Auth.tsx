@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { loginSchema, signUpSchema, forgotPasswordSchema, LoginFormData, SignUpFormData, ForgotPasswordFormData } from "@/lib/validations";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, Building } from "lucide-react";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -86,19 +86,25 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
-          <CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/5 p-4">
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <Card className="w-full max-w-md shadow-xl border-primary/10 relative z-10 animate-fade-in">
+        <CardHeader className="text-center space-y-2 pb-6">
+          <div className="flex justify-center mb-4">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Building className="h-8 w-8 text-primary" />
+            </div>
+          </div>
+          <CardTitle className="text-3xl font-bold">Trakilfy</CardTitle>
+          <CardDescription className="text-base">
             Sign in to your account or create a new one to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+              <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Login</TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign Up</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login" className="space-y-4">
