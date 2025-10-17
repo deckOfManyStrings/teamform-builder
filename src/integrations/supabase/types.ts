@@ -463,6 +463,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_add_client: {
+        Args: { business_uuid: string }
+        Returns: boolean
+      }
+      can_add_user: {
+        Args: {
+          business_uuid: string
+          user_role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
       check_user_business_role: {
         Args: {
           required_business_id: string
@@ -470,6 +481,21 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      get_business_usage_stats: {
+        Args: { business_uuid: string }
+        Returns: {
+          business_id: string
+          current_clients: number
+          current_managers: number
+          current_owners: number
+          current_staff: number
+          max_clients: number
+          max_managers: number
+          max_owners: number
+          max_staff: number
+          subscription_tier: Database["public"]["Enums"]["subscription_tier"]
+        }[]
       }
       get_invitation_by_token: {
         Args: { invitation_token: string }
@@ -482,6 +508,15 @@ export type Database = {
           id: string
           invited_by_name: string
           role: Database["public"]["Enums"]["user_role"]
+        }[]
+      }
+      get_tier_limits: {
+        Args: { tier: Database["public"]["Enums"]["subscription_tier"] }
+        Returns: {
+          max_clients: number
+          max_managers: number
+          max_owners: number
+          max_staff: number
         }[]
       }
       get_user_business_id: {

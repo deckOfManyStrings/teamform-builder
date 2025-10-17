@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useCanAddUser } from "@/hooks/use-subscription-limits";
+import { UpgradePrompt } from "@/components/subscription/UpgradePrompt";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -48,6 +50,25 @@ export default function TeamManagement({ businessId, userRole }: TeamManagementP
     email: '',
     role: 'staff' as 'staff' | 'manager' | 'owner'
   });
+  const { data: canAddStaff } = useCanAddUser("staff");
+  const { data: canAddManager } = useCanAddUser("manager");
+  const [currentTier, setCurrentTier] = useState("free");
+
+  useEffect(() => {
+    const fetchTier = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("users")
+        .select("business:businesses(subscription_tier)")
+        .eq("id", user.id)
+        .single();
+      
+      if (data?.business) {
+        setCurrentTier((data.business as any).subscription_tier);
+      }
+    };
+    fetchTier();
+  }, [user]);
 
   const canManageTeam = userRole === 'owner' || userRole === 'manager';
 
@@ -97,6 +118,25 @@ export default function TeamManagement({ businessId, userRole }: TeamManagementP
   const generateInviteCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canManageTeam || !user) return;
+
+    // Check limits before generating invite
+    if (inviteData.role === "staff" && !canAddStaff) {
+      toast({
+        title: "Limit Reached",
+        description: "You've reached your plan's staff limit. Please upgrade to add more staff.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (inviteData.role === "manager" && !canAddManager) {
+      toast({
+        title: "Limit Reached",
+        description: "You've reached your plan's manager limit. Please upgrade to add more managers.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const code = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
@@ -229,6 +269,19 @@ export default function TeamManagement({ businessId, userRole }: TeamManagementP
                     Generate an invite code for a new team member.
                   </DialogDescription>
                 </DialogHeader>
+                
+                {!canAddStaff && inviteData.role === "staff" && (
+                  <div className="mb-4">
+                    <UpgradePrompt limitType="staff" currentTier={currentTier} />
+                  </div>
+                )}
+                
+                {!canAddManager && inviteData.role === "manager" && (
+                  <div className="mb-4">
+                    <UpgradePrompt limitType="managers" currentTier={currentTier} />
+                  </div>
+                )}
+                
                 <form onSubmit={generateInviteCode} className="space-y-4">
                   <div>
                     <Label htmlFor="email">Email (optional)</Label>

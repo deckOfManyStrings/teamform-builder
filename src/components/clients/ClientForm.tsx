@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useCanAddClient } from "@/hooks/use-subscription-limits";
+import { UpgradePrompt } from "@/components/subscription/UpgradePrompt";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -39,6 +41,24 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const { data: canAddClient, isLoading: checkingLimit } = useCanAddClient();
+  const [currentTier, setCurrentTier] = useState("free");
+
+  useEffect(() => {
+    const fetchTier = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("users")
+        .select("business:businesses(subscription_tier)")
+        .eq("id", user.id)
+        .single();
+      
+      if (data?.business) {
+        setCurrentTier((data.business as any).subscription_tier);
+      }
+    };
+    fetchTier();
+  }, [user]);
 
   const {
     register,
@@ -58,6 +78,16 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
 
   const onSubmit = async (data: ClientFormData) => {
     if (!user) return;
+    
+    // Check limit for new clients
+    if (!client && !canAddClient) {
+      toast({
+        title: "Limit Reached",
+        description: "You've reached your plan's client limit. Please upgrade to add more clients.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setLoading(true);
     try {
@@ -108,6 +138,11 @@ export default function ClientForm({ businessId, client, onSaved, onCancel }: Cl
       setLoading(false);
     }
   };
+
+  // Show upgrade prompt if adding new client and limit reached
+  if (!client && canAddClient === false && !checkingLimit) {
+    return <UpgradePrompt limitType="clients" currentTier={currentTier} />;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
