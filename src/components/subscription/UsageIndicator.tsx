@@ -2,9 +2,10 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Building2, Shield, Crown, Settings } from "lucide-react";
+import { Users, Building2, Shield, Crown, Settings, Sparkles } from "lucide-react";
 import { SubscriptionLimits } from "@/hooks/use-subscription-limits";
 import { useSubscription } from "@/hooks/use-subscription";
+import { PricingDialog } from "./PricingDialog";
 
 interface UsageIndicatorProps {
   limits: SubscriptionLimits;
@@ -50,11 +51,18 @@ export const UsageIndicator = ({ limits }: UsageIndicatorProps) => {
             <Badge variant="secondary" className="capitalize">
               {limits.subscription_tier}
             </Badge>
-            {subscribed && (
+            {subscribed ? (
               <Button variant="outline" size="sm" onClick={openCustomerPortal}>
                 <Settings className="h-4 w-4 mr-2" />
                 Manage
               </Button>
+            ) : (
+              <PricingDialog>
+                <Button variant="default" size="sm">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Upgrade
+                </Button>
+              </PricingDialog>
             )}
           </div>
         </div>
