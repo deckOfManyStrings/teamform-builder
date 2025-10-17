@@ -38,15 +38,15 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b p-4">
+    <Sidebar collapsible="icon" className="bg-sidebar border-sidebar-border">
+      <SidebarHeader className="border-b border-sidebar-border bg-sidebar p-4">
         <div className="flex items-center justify-between">
-          {!collapsed && <h2 className="text-lg font-semibold">Trakilfy</h2>}
-          <SidebarTrigger />
+          {!collapsed && <h2 className="text-lg font-semibold text-sidebar-foreground">Trakilfy</h2>}
+          <SidebarTrigger className="text-sidebar-foreground hover:bg-sidebar-accent" />
         </div>
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="bg-sidebar">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -56,6 +56,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
                     isActive={activeTab === item.value}
                     onClick={() => onTabChange(item.value)}
                     tooltip={item.title}
+                    className="hover:bg-sidebar-accent data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
                   >
                     <item.icon className="h-4 w-4" />
                     {!collapsed && <span>{item.title}</span>}
@@ -67,10 +68,14 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t">
+      <SidebarFooter className="border-t border-sidebar-border bg-sidebar">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleSignOut} tooltip="Log Out">
+            <SidebarMenuButton 
+              onClick={handleSignOut} 
+              tooltip="Log Out"
+              className="hover:bg-sidebar-accent text-sidebar-foreground"
+            >
               <LogOut className="h-4 w-4" />
               {!collapsed && <span>Log Out</span>}
             </SidebarMenuButton>
