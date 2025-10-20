@@ -29,9 +29,9 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
-  const { state, isMobile, open } = useSidebar();
+  const { state, isMobile, openMobile } = useSidebar();
   const collapsed = state === "collapsed";
-  const showLabels = isMobile ? open : !collapsed;
+  const showLabels = isMobile ? openMobile : !collapsed;
   const { signOut } = useAuth();
 
   const handleSignOut = async () => {
