@@ -181,11 +181,11 @@ export default function Dashboard() {
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Header */}
           <header className="border-b bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
-            <div className="flex items-center h-16 px-4 gap-4">
+            <div className="flex items-center h-14 px-3 sm:px-4 gap-3">
               {profile?.business_id && <SidebarTrigger className="-ml-1 md:hidden" />}
               <div className="flex-1 flex items-center justify-between">
                 <h1 className="text-lg font-semibold text-foreground">Trakilfy</h1>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                       {getInitials(profile?.first_name, profile?.last_name)}
@@ -198,18 +198,18 @@ export default function Dashboard() {
 
           {/* Main Content */}
           <main className="bg-slate-50 min-h-screen flex-1">
-            <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+            <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
               {!profile?.business_id ?
             // No business setup yet
             <div className="max-w-2xl mx-auto animate-fade-in">
                   <BusinessSetup onBusinessCreated={handleBusinessCreated} />
                 </div> :
             // Business exists, show dashboard
-            <div className="space-y-4 sm:space-y-6 md:space-y-8 animate-fade-in">
+            <div className="space-y-3 sm:space-y-4 animate-fade-in">
                   {/* Content based on active tab */}
-                  {activeTab === "overview" && <div className="space-y-4 sm:space-y-6 animate-fade-in">
+                  {activeTab === "overview" && <div className="space-y-3 sm:space-y-4 animate-fade-in">
                       {/* Welcome Section */}
-                      <div className="bg-white p-4 sm:p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm">
+                      <div className="bg-white p-4 sm:p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm">
                         <div className="flex flex-col gap-3 sm:gap-4">
                           <div>
                             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight">
@@ -236,7 +236,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {/* Enterprise KPI Cards */}
-                      <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+                      <div className="grid gap-2.5 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
                           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
                             <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Active Clients</CardTitle>
