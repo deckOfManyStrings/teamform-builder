@@ -29,8 +29,9 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
-  const { state } = useSidebar();
+  const { state, isMobile, open } = useSidebar();
   const collapsed = state === "collapsed";
+  const showLabels = isMobile ? open : !collapsed;
   const { signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -41,7 +42,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
     <Sidebar collapsible="icon" className="bg-sidebar border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border bg-sidebar p-4">
         <div className="flex items-center justify-between">
-          {!collapsed && <h2 className="text-lg font-semibold text-sidebar-foreground">Trakilfy</h2>}
+          {showLabels && <h2 className="text-lg font-semibold text-sidebar-foreground">Trakilfy</h2>}
           <SidebarTrigger className="text-sidebar-foreground hover:bg-sidebar-accent" />
         </div>
       </SidebarHeader>
@@ -59,7 +60,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
                     className="hover:bg-sidebar-accent data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
                   >
                     <item.icon className="h-4 w-4" />
-                    {!collapsed && <span>{item.title}</span>}
+                    {showLabels && <span>{item.title}</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -78,7 +79,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               className="hover:bg-sidebar-accent data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
             >
               <Settings className="h-4 w-4" />
-              {!collapsed && <span>Account</span>}
+              {showLabels && <span>Account</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -88,7 +89,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               className="hover:bg-sidebar-accent text-sidebar-foreground"
             >
               <LogOut className="h-4 w-4" />
-              {!collapsed && <span>Log Out</span>}
+              {showLabels && <span>Log Out</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
