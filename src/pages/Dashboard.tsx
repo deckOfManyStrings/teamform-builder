@@ -181,7 +181,19 @@ export default function Dashboard() {
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Header */}
           <header className="border-b bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
-            
+            <div className="flex items-center h-16 px-4 gap-4">
+              {profile?.business_id && <SidebarTrigger className="-ml-1" />}
+              <div className="flex-1 flex items-center justify-between">
+                <h1 className="text-lg font-semibold text-foreground">Trakilfy</h1>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {getInitials(profile?.first_name, profile?.last_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+            </div>
           </header>
 
           {/* Main Content */}
