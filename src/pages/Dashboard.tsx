@@ -198,34 +198,34 @@ export default function Dashboard() {
 
           {/* Main Content */}
           <main className="bg-slate-50 min-h-screen flex-1">
-            <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+            <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
               {!profile?.business_id ?
             // No business setup yet
             <div className="max-w-2xl mx-auto animate-fade-in">
                   <BusinessSetup onBusinessCreated={handleBusinessCreated} />
                 </div> :
             // Business exists, show dashboard
-            <div className="space-y-6 lg:space-y-8 animate-fade-in">
+            <div className="space-y-4 sm:space-y-6 md:space-y-8 animate-fade-in">
                   {/* Content based on active tab */}
-                  {activeTab === "overview" && <div className="space-y-6 animate-fade-in">
+                  {activeTab === "overview" && <div className="space-y-4 sm:space-y-6 animate-fade-in">
                       {/* Welcome Section */}
-                      <div className="bg-white p-6 lg:p-8 rounded-xl border border-slate-200 shadow-sm">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      <div className="bg-white p-4 sm:p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="flex flex-col gap-3 sm:gap-4">
                           <div>
-                            <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight">
                               Welcome back, {profile?.first_name || 'User'}
                             </h2>
-                            <div className="flex items-center gap-3 mt-2">
-                              <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+                              <span className="bg-blue-50 text-blue-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                                 {business?.name}
                               </span>
-                              <span className="text-slate-400">•</span>
-                              <span className="text-slate-600 capitalize text-sm">
+                              <span className="text-slate-400 hidden sm:inline">•</span>
+                              <span className="text-slate-600 capitalize text-xs sm:text-sm">
                                 {profile?.role?.replace('_', ' ') || 'staff member'}
                               </span>
                             </div>
                           </div>
-                          <div className="text-sm text-slate-500">
+                          <div className="text-xs sm:text-sm text-slate-500">
                             {new Date().toLocaleDateString('en-US', {
                           weekday: 'long',
                           year: 'numeric',
@@ -236,77 +236,77 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {/* Enterprise KPI Cards */}
-                      <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
+                      <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                            <CardTitle className="text-sm font-medium text-slate-600">Active Clients</CardTitle>
-                            <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                              <UserCheck className="h-4 w-4 text-green-600" />
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                            <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Active Clients</CardTitle>
+                            <div className="p-1.5 sm:p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                              <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600" />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <div className="text-2xl font-semibold text-slate-900">{teamStats.clientCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <div className="text-xl sm:text-2xl font-semibold text-slate-900">{teamStats.clientCount}</div>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
                               {teamStats.clientCount === 0 ? 'No clients registered' : 'registered clients'}
                             </p>
                           </CardContent>
                         </Card>
 
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                            <CardTitle className="text-sm font-medium text-slate-600">Team Size</CardTitle>
-                            <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                              <Users className="h-4 w-4 text-blue-600" />
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                            <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Team Size</CardTitle>
+                            <div className="p-1.5 sm:p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600" />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <div className="text-2xl font-semibold text-slate-900">{teamStats.memberCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <div className="text-xl sm:text-2xl font-semibold text-slate-900">{teamStats.memberCount}</div>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
                               {teamStats.memberCount === 1 ? 'Only you' : 'active members'}
                             </p>
                           </CardContent>
                         </Card>
 
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                            <CardTitle className="text-sm font-medium text-slate-600">Active Forms</CardTitle>
-                            <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
-                              <FileText className="h-4 w-4 text-purple-600" />
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                            <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Active Forms</CardTitle>
+                            <div className="p-1.5 sm:p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
+                              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-600" />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <div className="text-2xl font-semibold text-slate-900">{teamStats.formCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <div className="text-xl sm:text-2xl font-semibold text-slate-900">{teamStats.formCount}</div>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
                               {teamStats.formCount === 0 ? 'No forms created' : 'published forms'}
                             </p>
                           </CardContent>
                         </Card>
 
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                            <CardTitle className="text-sm font-medium text-slate-600">Total Submissions</CardTitle>
-                            <div className="p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
-                              <BarChart3 className="h-4 w-4 text-emerald-600" />
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                            <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Total Submissions</CardTitle>
+                            <div className="p-1.5 sm:p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                              <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-600" />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <div className="text-2xl font-semibold text-slate-900">{teamStats.submissionCount}</div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <div className="text-xl sm:text-2xl font-semibold text-slate-900">{teamStats.submissionCount}</div>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
                               {teamStats.submissionCount === 0 ? 'No submissions' : 'completed forms'}
                             </p>
                           </CardContent>
                         </Card>
 
                         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                            <CardTitle className="text-sm font-medium text-slate-600">Pending Review</CardTitle>
-                            <div className={`p-2 rounded-lg transition-colors ${teamStats.pendingReview > 0 ? 'bg-amber-50 group-hover:bg-amber-100' : 'bg-slate-50 group-hover:bg-slate-100'}`}>
-                              <BarChart3 className={`h-4 w-4 ${teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'}`} />
+                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                            <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">Pending Review</CardTitle>
+                            <div className={`p-1.5 sm:p-2 rounded-lg transition-colors ${teamStats.pendingReview > 0 ? 'bg-amber-50 group-hover:bg-amber-100' : 'bg-slate-50 group-hover:bg-slate-100'}`}>
+                              <BarChart3 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${teamStats.pendingReview > 0 ? 'text-amber-600' : 'text-slate-400'}`} />
                             </div>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <div className="text-2xl font-semibold text-slate-900">{teamStats.pendingReview}</div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <div className="text-xl sm:text-2xl font-semibold text-slate-900">{teamStats.pendingReview}</div>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
                               awaiting review
                             </p>
                           </CardContent>
@@ -316,71 +316,71 @@ export default function Dashboard() {
                       {/* System Overview */}
                       <Card className="bg-white border border-slate-200 shadow-sm">
                         <CardHeader className="border-b border-slate-100">
-                          <CardTitle className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-100 rounded-lg">
-                              <BarChart3 className="h-5 w-5 text-slate-700" />
+                          <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+                            <div className="p-1.5 sm:p-2 bg-slate-100 rounded-lg">
+                              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-slate-700" />
                             </div>
                             System Overview
                           </CardTitle>
-                        <CardDescription className="text-slate-500">
+                        <CardDescription className="text-slate-500 text-xs sm:text-sm">
                           Current status of your management system
                         </CardDescription>
                         </CardHeader>
-                        <CardContent className="pt-6">
-                          <div className="space-y-4">
-                            {teamStats.submissionCount > 0 ? <div className="space-y-3">
-                                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                                  <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-green-100 rounded-full">
-                                      <FileText className="h-4 w-4 text-green-700" />
+                        <CardContent className="pt-4 sm:pt-6">
+                          <div className="space-y-3 sm:space-y-4">
+                            {teamStats.submissionCount > 0 ? <div className="space-y-2 sm:space-y-3">
+                                <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+                                  <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="p-1.5 sm:p-2 bg-green-100 rounded-full">
+                                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-green-700" />
                                     </div>
-                                    <span className="text-sm font-medium text-green-800">
+                                    <span className="text-xs sm:text-sm font-medium text-green-800">
                                       Total form submissions processed
                                     </span>
                                   </div>
-                                  <span className="text-lg font-semibold text-green-900">{teamStats.submissionCount}</span>
+                                  <span className="text-base sm:text-lg font-semibold text-green-900">{teamStats.submissionCount}</span>
                                 </div>
                                 
-                                {teamStats.pendingReview > 0 && <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                                    <div className="flex items-center gap-3">
-                                      <div className="p-2 bg-amber-100 rounded-full">
-                                        <BarChart3 className="h-4 w-4 text-amber-700" />
+                                {teamStats.pendingReview > 0 && <div className="flex items-center justify-between p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                      <div className="p-1.5 sm:p-2 bg-amber-100 rounded-full">
+                                        <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-amber-700" />
                                       </div>
-                                      <span className="text-sm font-medium text-amber-800">
+                                      <span className="text-xs sm:text-sm font-medium text-amber-800">
                                         Submissions requiring review
                                       </span>
                                     </div>
-                                    <span className="text-lg font-semibold text-amber-900">{teamStats.pendingReview}</span>
+                                    <span className="text-base sm:text-lg font-semibold text-amber-900">{teamStats.pendingReview}</span>
                                   </div>}
                                 
-                                <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                  <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 rounded-full">
-                                      <Users className="h-4 w-4 text-blue-700" />
+                                <div className="flex items-center justify-between p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                  <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="p-1.5 sm:p-2 bg-blue-100 rounded-full">
+                                      <Users className="h-3 w-3 sm:h-4 sm:w-4 text-blue-700" />
                                     </div>
-                                    <span className="text-sm font-medium text-blue-800">
+                                    <span className="text-xs sm:text-sm font-medium text-blue-800">
                                       Active client registrations
                                     </span>
                                   </div>
-                                  <span className="text-lg font-semibold text-blue-900">{teamStats.clientCount}</span>
+                                  <span className="text-base sm:text-lg font-semibold text-blue-900">{teamStats.clientCount}</span>
                                 </div>
                                 
-                                <div className="flex items-center justify-between p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                                  <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-purple-100 rounded-full">
-                                      <FileText className="h-4 w-4 text-purple-700" />
+                                <div className="flex items-center justify-between p-3 sm:p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                                  <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="p-1.5 sm:p-2 bg-purple-100 rounded-full">
+                                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-purple-700" />
                                     </div>
-                                    <span className="text-sm font-medium text-purple-800">
+                                    <span className="text-xs sm:text-sm font-medium text-purple-800">
                                       Published form templates
                                     </span>
                                   </div>
-                                  <span className="text-lg font-semibold text-purple-900">{teamStats.formCount}</span>
+                                  <span className="text-base sm:text-lg font-semibold text-purple-900">{teamStats.formCount}</span>
                                 </div>
-                              </div> : <div className="text-center py-12">
-                                <div className="p-6 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 inline-block">
-                                  <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                                  <p className="text-slate-600 font-medium mb-2">Getting Started</p>
-                                  <p className="text-sm text-slate-500 max-w-sm mx-auto">
+                              </div> : <div className="text-center py-8 sm:py-12">
+                                <div className="p-4 sm:p-6 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 inline-block">
+                                  <BarChart3 className="h-10 w-10 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
+                                  <p className="text-slate-600 font-medium mb-2 text-sm sm:text-base">Getting Started</p>
+                                  <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto px-4">
                                     Begin by creating form templates and registering clients to start collecting client data.
                                   </p>
                                 </div>
