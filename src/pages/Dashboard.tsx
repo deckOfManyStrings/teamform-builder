@@ -182,7 +182,7 @@ export default function Dashboard() {
           {/* Mobile Navigation Tab Trigger */}
           {profile?.business_id && (
             <div className="md:hidden fixed top-4 left-0 z-50">
-              <SidebarTrigger className="bg-sidebar text-sidebar-foreground shadow-lg border border-l-0 rounded-tr-lg rounded-br-lg px-2 py-6 hover:bg-sidebar-accent transition-colors" />
+              <SidebarTrigger className="bg-sidebar text-sidebar-foreground shadow-lg border border-l-0 rounded-l-none rounded-r-lg px-2 py-6 hover:bg-sidebar-accent transition-colors" />
             </div>
           )}
           
