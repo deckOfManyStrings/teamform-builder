@@ -181,8 +181,8 @@ export default function Dashboard() {
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Mobile Navigation Tab Trigger */}
           {profile?.business_id && (
-            <div className="md:hidden fixed top-1/2 -translate-y-1/2 left-0 z-50">
-              <SidebarTrigger className="bg-white shadow-lg border border-l-0 rounded-r-lg px-2 py-6 hover:bg-accent transition-colors" />
+            <div className="md:hidden fixed top-4 left-0 z-50">
+              <SidebarTrigger className="bg-sidebar text-sidebar-foreground shadow-lg border border-l-0 rounded-r-lg px-2 py-6 hover:bg-sidebar-accent transition-colors" />
             </div>
           )}
           
