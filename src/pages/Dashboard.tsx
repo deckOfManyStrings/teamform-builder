@@ -179,6 +179,13 @@ export default function Dashboard() {
         {profile?.business_id && <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />}
         
         <div className="flex-1 flex flex-col min-h-screen">
+          {/* Mobile Navigation Trigger */}
+          {profile?.business_id && (
+            <div className="md:hidden fixed top-3 left-3 z-50">
+              <SidebarTrigger className="bg-white shadow-md border" />
+            </div>
+          )}
+          
           {/* Main Content */}
           <main className="bg-slate-50 min-h-screen flex-1">
             <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
