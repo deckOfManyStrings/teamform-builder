@@ -12,7 +12,7 @@ import TeamManagement from "@/components/team/TeamManagement";
 import ClientList from "@/components/clients/ClientList";
 import FormList from "@/components/forms/FormList";
 import SubmissionList from "@/components/submissions/SubmissionList";
-import AnalyticsDashboard from "@/components/reports/AnalyticsDashboard";
+import ExportCenter from "@/components/reports/ExportCenter";
 import AuditTrail from "@/components/reports/AuditTrail";
 import AccountSettings from "@/components/settings/AccountSettings";
 interface UserProfile {
@@ -397,7 +397,7 @@ export default function Dashboard() {
                     </div>}
 
                   {activeTab === "reports" && <div className="space-y-6 animate-fade-in">
-                      <AnalyticsDashboard businessId={profile.business_id} userRole={profile.role || 'staff'} />
+                      <ExportCenter businessId={profile.business_id} userRole={profile.role || 'staff'} timeRange="30" />
                       <AuditTrail businessId={profile.business_id} userRole={profile.role || 'staff'} />
                     </div>}
 
