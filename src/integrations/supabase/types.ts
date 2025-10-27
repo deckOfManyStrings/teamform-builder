@@ -20,7 +20,7 @@ export type Database = {
           business_id: string | null
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_values: Json | null
           old_values: Json | null
           record_id: string | null
@@ -33,7 +33,7 @@ export type Database = {
           business_id?: string | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
@@ -46,7 +46,7 @@ export type Database = {
           business_id?: string | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
@@ -463,10 +463,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      can_add_client: {
-        Args: { business_uuid: string }
-        Returns: boolean
-      }
+      can_add_client: { Args: { business_uuid: string }; Returns: boolean }
       can_add_user: {
         Args: {
           business_uuid: string
@@ -519,10 +516,7 @@ export type Database = {
           max_staff: number
         }[]
       }
-      get_user_business_id: {
-        Args: { user_id: string }
-        Returns: string
-      }
+      get_user_business_id: { Args: { user_id: string }; Returns: string }
       use_invite_code: {
         Args: { invitation_code: string; user_id: string }
         Returns: boolean
