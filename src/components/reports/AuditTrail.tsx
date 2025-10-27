@@ -43,6 +43,8 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [displayLimit, setDisplayLimit] = useState(20);
+  const [hasMore, setHasMore] = useState(false);
 
   const canViewAuditTrail = userRole === 'owner' || userRole === 'manager';
 
@@ -85,19 +87,24 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
     }
     
     setFilteredLogs(filtered);
-  }, [auditLogs, searchTerm, actionFilter, tableFilter, startDate, endDate]);
+    setHasMore(filtered.length > displayLimit);
+  }, [auditLogs, searchTerm, actionFilter, tableFilter, startDate, endDate, displayLimit]);
 
   const fetchAuditLogs = async () => {
     setLoading(true);
     try {
+      // Fetch more than we display to check if there are more records
       const { data: logs, error: logsError } = await supabase
         .from('audit_logs')
         .select('*')
         .eq('business_id', businessId)
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(1000);
 
       if (logsError) throw logsError;
+      
+      // Check if there are more records than our initial display limit
+      setHasMore((logs?.length || 0) > displayLimit);
 
       // Get user names for the logs
       const userIds = [...new Set(logs?.map(log => log.user_id).filter(Boolean) || [])];
@@ -347,7 +354,8 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
                 }
               </div>
             ) : (
-              filteredLogs.map((log) => (
+              <>
+                {filteredLogs.slice(0, displayLimit).map((log) => (
                 <div
                   key={log.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
@@ -441,7 +449,20 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
                     </DialogContent>
                   </Dialog>
                 </div>
-              ))
+              ))}
+              
+              {/* Load More Button */}
+              {hasMore && displayLimit < filteredLogs.length && (
+                <div className="flex justify-center pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setDisplayLimit(prev => prev + 20)}
+                  >
+                    Load More ({filteredLogs.length - displayLimit} remaining)
+                  </Button>
+                </div>
+              )}
+              </>
             )}
           </div>
         </CardContent>
