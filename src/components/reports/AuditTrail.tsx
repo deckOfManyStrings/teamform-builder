@@ -7,8 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Search, Filter, Download, Eye, User, Calendar } from "lucide-react";
+import { Shield, Search, Filter, Download, Eye, User, Calendar as CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface AuditLog {
   id: string;
@@ -37,6 +41,8 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
   const [actionFilter, setActionFilter] = useState("all");
   const [tableFilter, setTableFilter] = useState("all");
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   const canViewAuditTrail = userRole === 'owner' || userRole === 'manager';
 
@@ -49,7 +55,7 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
   }, [businessId, canViewAuditTrail]);
 
   useEffect(() => {
-    // Filter logs based on search term, action, and table
+    // Filter logs based on search term, action, table, and date range
     let filtered = auditLogs;
     
     if (searchTerm) {
@@ -68,8 +74,18 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
       filtered = filtered.filter(log => log.table_name === tableFilter);
     }
     
+    if (startDate) {
+      filtered = filtered.filter(log => new Date(log.created_at) >= startDate);
+    }
+    
+    if (endDate) {
+      const endOfDay = new Date(endDate);
+      endOfDay.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(log => new Date(log.created_at) <= endOfDay);
+    }
+    
     setFilteredLogs(filtered);
-  }, [auditLogs, searchTerm, actionFilter, tableFilter]);
+  }, [auditLogs, searchTerm, actionFilter, tableFilter, startDate, endDate]);
 
   const fetchAuditLogs = async () => {
     setLoading(true);
@@ -218,45 +234,114 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex gap-4 mb-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by user, table, or action..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <div className="space-y-4 mb-4">
+            <div className="flex gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by user, table, or action..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={actionFilter} onValueChange={setActionFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="All Actions" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Actions</SelectItem>
+                  {uniqueActions.map(action => (
+                    <SelectItem key={action} value={action}>{action}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={tableFilter} onValueChange={setTableFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="All Tables" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Tables</SelectItem>
+                  {uniqueTables.map(table => (
+                    <SelectItem key={table} value={table}>{formatTableName(table)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Actions" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Actions</SelectItem>
-                {uniqueActions.map(action => (
-                  <SelectItem key={action} value={action}>{action}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={tableFilter} onValueChange={setTableFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Tables" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Tables</SelectItem>
-                {uniqueTables.map(table => (
-                  <SelectItem key={table} value={table}>{formatTableName(table)}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            
+            {/* Date Range Filters */}
+            <div className="flex gap-4 items-center">
+              <span className="text-sm text-muted-foreground">Date Range:</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[200px] justify-start text-left font-normal",
+                      !startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "PPP") : "Start date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              <span className="text-muted-foreground">to</span>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[200px] justify-start text-left font-normal",
+                      !endDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDate ? format(endDate, "PPP") : "End date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              {(startDate || endDate) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }}
+                >
+                  Clear dates
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Audit Log List */}
           <div className="space-y-3">
             {filteredLogs.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                {searchTerm || actionFilter !== "all" || tableFilter !== "all"
+                {searchTerm || actionFilter !== "all" || tableFilter !== "all" || startDate || endDate
                   ? 'No audit logs found matching your filters.'
                   : 'No audit logs available.'
                 }
@@ -284,7 +369,7 @@ export default function AuditTrail({ businessId, userRole }: AuditTrailProps) {
                           <span>{log.user_name || 'System'}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                          <CalendarIcon className="h-3 w-3" />
                           <span>{formatDate(log.created_at)}</span>
                         </div>
                       </div>
