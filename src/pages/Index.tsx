@@ -36,7 +36,7 @@ const Index = () => {
             <Building className="h-8 w-8 text-sidebar-primary-foreground" />
             <h1 className="text-2xl font-bold text-sidebar-foreground">Trakilfy</h1>
           </div>
-          <Button onClick={() => navigate('/auth')} size="sm" className="bg-sidebar-primary hover:bg-sidebar-primary/90 text-sidebar-primary-foreground">
+          <Button onClick={() => navigate('/dashboard')} size="sm" className="bg-sidebar-primary hover:bg-sidebar-primary/90 text-sidebar-primary-foreground">
             Get Started
           </Button>
         </div>
@@ -58,7 +58,7 @@ const Index = () => {
               Build custom forms, collect client data, and collaborate with your team—all in one secure platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')} className="text-lg px-8 py-6 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
+              <Button size="lg" onClick={() => navigate('/dashboard')} className="text-lg px-8 py-6 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -246,7 +246,7 @@ const Index = () => {
                       <span className="text-sm">Email support</span>
                     </li>
                   </ul>
-                  <Button className="w-full mt-6" variant="outline" onClick={() => navigate('/auth')}>
+                  <Button className="w-full mt-6" variant="outline" onClick={() => navigate('/dashboard')}>
                     Start Free
                   </Button>
                 </CardContent>
@@ -289,7 +289,7 @@ const Index = () => {
                       <span className="text-sm">Export reports</span>
                     </li>
                   </ul>
-                  <Button className="w-full mt-6" onClick={() => navigate('/auth')}>
+                  <Button className="w-full mt-6" onClick={() => navigate('/dashboard')}>
                     Get Started
                   </Button>
                 </CardContent>
@@ -339,7 +339,7 @@ const Index = () => {
                       <span className="text-sm">Audit trails</span>
                     </li>
                   </ul>
-                  <Button className="w-full mt-6" onClick={() => navigate('/auth')}>
+                  <Button className="w-full mt-6" onClick={() => navigate('/dashboard')}>
                     Get Started
                   </Button>
                 </CardContent>
@@ -389,7 +389,7 @@ const Index = () => {
                       <span className="text-sm">SLA guarantee</span>
                     </li>
                   </ul>
-                  <Button className="w-full mt-6" variant="outline" onClick={() => navigate('/auth')}>
+                  <Button className="w-full mt-6" variant="outline" onClick={() => navigate('/dashboard')}>
                     Get Started
                   </Button>
                 </CardContent>
@@ -433,7 +433,7 @@ const Index = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/auth')} className="text-xl px-12 py-8 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
+              <Button size="lg" onClick={() => navigate('/dashboard')} className="text-xl px-12 py-8 bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transition-all">
                 Get Started Free
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
